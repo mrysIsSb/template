@@ -1,5 +1,7 @@
 package top.mrys.core;
 
+import java.util.function.Function;
+
 /**
  * @author mrys
  */
@@ -51,8 +53,48 @@ public class Result<T> {
       Result{code=%d, msg='%s', data=%s}
       """.formatted(code, msg, data);
   }
+
   // ----------------------override end----------------------
   // ----------------------method begin----------------------
+
+  /**
+   * 数据转换
+   *
+   * @param mapper 转换函数
+   * @param <O>    转换后的类型
+   * @return 转换后的结果
+   * @author mrys
+   */
+  public <O> Result<O> map(Function<T, O> mapper) {
+    return new Result<>(code, msg, mapper.apply(data));
+  }
+
+  /**
+   * 数据转换
+   *
+   * @param mapper 转换函数
+   * @param <O>    转换后的类型
+   * @return 转换后的结果
+   */
+  public <O> Result<O> matOK(Function<T, O> mapper) {
+    return map(0, mapper);
+  }
+
+  /**
+   * 数据转换
+   *
+   * @param code   状态码
+   * @param mapper 转换函数
+   * @param <O>    转换后的类型
+   * @return 转换后的结果
+   * @author mrys
+   */
+  public <O> Result<O> map(Integer code, Function<T, O> mapper) {
+    if (this.code == code) {
+      return new Result<>(code, msg, mapper.apply(data));
+    }
+    return new Result<>(this.code, this.msg, null);
+  }
 
   // ----------------------method end------------------------
 
