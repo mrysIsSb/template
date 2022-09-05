@@ -1,5 +1,6 @@
 package top.mrys.core;
 
+import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -94,6 +95,33 @@ public class Result<T> {
       return new Result<>(code, msg, mapper.apply(data));
     }
     return new Result<>(this.code, this.msg, null);
+  }
+
+  public Optional<T> optional() {
+    return Optional.ofNullable(data);
+  }
+
+  public Result<T> then(Function<T, Result<T>> function) {
+    if (isOk()) {
+      return function.apply(data);
+    }
+    return this;
+  }
+
+
+  public Result<T> throwIfError() throws ResultException {
+    return throwIfError(msg);
+  }
+
+  public Result<T> throwIfError(String msg) throws ResultException {
+    if (!isOk()) {
+      throw new ResultException(code, msg);
+    }
+    return this;
+  }
+
+  public Boolean isOk() {
+    return code == 0;
   }
 
   // ----------------------method end------------------------
