@@ -1,0 +1,14 @@
+[
+  {
+    "resource": "GET:http://user/get",
+    "count": 0.5,
+    "grade": 1,
+    "timeWindow": 30
+  },
+  {
+    "resource": "GET:http://user",
+    "count": 0.5,
+    "grade": 1,
+    "timeWindow": 10
+  }
+]

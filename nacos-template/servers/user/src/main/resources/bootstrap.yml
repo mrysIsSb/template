@@ -1,0 +1,58 @@
+server:
+  port: 11002
+  max-http-header-size: 1MB
+spring:
+  application:
+    name: user
+  cloud:
+    # 关闭版本验证
+    compatibility-verifier:
+      enabled: false
+    nacos:
+      discovery:
+        server-addr: ${NACOS_HOST:localhost}:${NACOS_PORT:8848}
+        namespace: ${namespace:}
+        ip: ${ip:localhost}
+        register-enabled: true
+      config:
+        server-addr: ${spring.cloud.nacos.discovery.server-addr}
+        file-extension: yml
+        namespace: ${namespace:}
+        shared-configs:
+          - dataId: application-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
+          - dataId: grpc.yml
+            refresh: false
+        enabled: true
+        refresh-enabled: ${config.refresh:false}
+  profiles:
+    active: dev
+  banner:
+    image:
+      width: 100
+      pixelmode: block
+  jackson:
+    date-format: java.text.SimpleDateFormat
+auth:
+  serviceName: '用户'
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+debug: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+  health:
+    db:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+  prometheus:
+    enabled: true
