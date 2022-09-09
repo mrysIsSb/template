@@ -1,5 +1,6 @@
 package top.mrys.user.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import top.mrys.api.user.UserApi;
@@ -14,7 +15,7 @@ import top.mrys.core.Result;
 public class UserController implements UserApi {
 
   @Override
-  public Result<UserDTO> getUser(String username) {
+  public Result<UserDTO> get(String username) {
     if ("mrys".equals(username)) {
       UserDTO userDTO = new UserDTO();
       userDTO.setUsername("mrys");

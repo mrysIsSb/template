@@ -1,12 +1,12 @@
 [
   {
-    "resource": "GET:http://user/get",
+    "resource": "GET:http://user/user/get",
     "count": 0.5,
     "grade": 1,
     "timeWindow": 30
   },
   {
-    "resource": "GET:http://user",
+    "resource": "GET:http://user/user",
     "count": 0.5,
     "grade": 1,
     "timeWindow": 10

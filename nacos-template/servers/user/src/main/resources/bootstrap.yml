@@ -37,7 +37,7 @@ auth:
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-debug: true
+debug: false
 
 management:
   endpoints:

@@ -1,6 +1,6 @@
 [
   {
-    "resource": "GET:http://user/get",
+    "resource": "GET:http://user/user/get",
     "controlBehavior": 0,
     "count": 1,
     "grade": 1,

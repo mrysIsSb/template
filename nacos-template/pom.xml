@@ -7,6 +7,9 @@
     <module>servers/auth</module>
     <module>servers/user</module>
     <module>apis/api-user</module>
+    <module>common/base</module>
+    <module>gateway</module>
+    <module>admin</module>
   </modules>
   <parent>
     <groupId>org.springframework.boot</groupId>
@@ -59,6 +62,24 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
+      <!--api-->
+      <dependency>
+        <groupId>org.springdoc</groupId>
+        <artifactId>springdoc-openapi-ui</artifactId>
+        <version>1.6.3</version>
+        <exclusions>
+          <exclusion>
+            <artifactId>swagger-ui</artifactId>
+            <groupId>org.webjars</groupId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>com.github.xiaoymin</groupId>
+        <artifactId>knife4j-spring-ui</artifactId>
+        <version>3.0.3</version>
+      </dependency>
+
     </dependencies>
   </dependencyManagement>
 

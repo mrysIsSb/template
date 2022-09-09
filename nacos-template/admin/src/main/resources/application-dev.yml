@@ -1,0 +1,6 @@
+NACOS_HOST: 192.168.0.106
+NACOS_PORT: 8848
+#namespace: b5fe74e5-33aa-4595-93b3-42a795100f16
+ip: localhost
+config:
+  refresh: false

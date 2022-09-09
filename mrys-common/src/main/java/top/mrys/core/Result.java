@@ -50,9 +50,10 @@ public class Result<T> {
   // ----------------------override begin----------------------
   @Override
   public String toString() {
-    return """
-      Result{code=%d, msg='%s', data=%s}
-      """.formatted(code, msg, data);
+//    return """
+//      Result{code=%d, msg='%s', data=%s}
+//      """.formatted(code, msg, data);
+    return "Result{code=%d, msg='%s', data=%s}".formatted(code, msg, data);
   }
 
   // ----------------------override end----------------------
@@ -77,7 +78,7 @@ public class Result<T> {
    * @param <O>    转换后的类型
    * @return 转换后的结果
    */
-  public <O> Result<O> matOK(Function<T, O> mapper) {
+  public <O> Result<O> mapOK(Function<T, O> mapper) {
     return map(0, mapper);
   }
 

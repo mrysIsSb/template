@@ -4,6 +4,18 @@ server:
 spring:
   application:
     name: auth
+#  boot:
+#    admin:
+#      client:
+#        url: http://localhost:10001
+#        instance:
+#          name: ${spring.application.name}
+#          metadata:
+#            user.name: ${spring.application.name}
+#            user.ip: ${ip:localhost}
+#            user.port: ${server.port}
+#            user.version: ${spring.application.version}
+#            user.env: ${spring.profiles.active}
   cloud:
     # 关闭版本验证
     compatibility-verifier:
@@ -14,6 +26,9 @@ spring:
         namespace: ${namespace:}
         ip: ${ip:localhost}
         register-enabled: true
+        metadata:
+          version: ${spring.application.version:@project.version@}
+          env: ${spring.profiles.active}
       config:
         server-addr: ${spring.cloud.nacos.discovery.server-addr}
         file-extension: yml
@@ -26,20 +41,30 @@ spring:
         refresh-enabled: ${config.refresh:false}
     sentinel:
       enabled: true
+      httpMethodSpecify: true
       transport:
-        dashboard: "localhost:8080"
+        dashboard: "192.168.0.106:12001"
+        clientIp: "192.168.0.101"
+        port: 8719
       eager: true
       datasource:
-        ds1:
-          file:
-            file: "classpath: flow-rule.json"
-            date-type: json
+#        ds1:
+#          file:
+#            file: "classpath: flow-rule.json"
+#            date-type: json
+#            rule-type: flow
+#        ds2:
+#          file:
+#            file: "classpath: degrade-rule.json"
+#            date-type: json
+#            rule-type: degrade
+        ds3:
+          nacos:
+            server-addr: ${spring.cloud.nacos.discovery.server-addr}
+            dataId: ${spring.application.name}-sentinel-flow
+            namespace: ${namespace:}
+            data-type: json
             rule-type: flow
-        ds2:
-          file:
-            file: "classpath: degrade-rule.json"
-            date-type: json
-            rule-type: degrade
 
   profiles:
     active: dev
@@ -73,7 +98,8 @@ management:
         enabled: true
   prometheus:
     enabled: true
-
-fegin:
+# feign
+feign:
   sentinel:
     enabled: true
+

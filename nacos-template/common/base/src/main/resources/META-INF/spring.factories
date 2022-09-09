@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+top.mrys.base.GlobalExceptionHandler,\
+top.mrys.base.CustomBlockExceptionHandler
