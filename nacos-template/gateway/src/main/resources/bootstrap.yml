@@ -3,6 +3,8 @@ server:
 spring:
   application:
     name: gateway
+  main:
+    allow-bean-definition-overriding: true
   cloud:
     # 关闭版本验证
     compatibility-verifier:

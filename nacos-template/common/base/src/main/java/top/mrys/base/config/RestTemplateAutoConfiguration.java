@@ -12,7 +12,7 @@ import org.springframework.web.client.RestTemplate;
 public class RestTemplateAutoConfiguration {
 
   @Bean
-  @LoadBalanced
+  @LoadBalanced //开启负载均衡 就是加个了拦截器
   public RestTemplate restTemplate(){
     return new RestTemplate();
   }
