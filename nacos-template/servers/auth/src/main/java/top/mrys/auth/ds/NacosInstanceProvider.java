@@ -34,14 +34,12 @@ public class NacosInstanceProvider implements SmartInitializingSingleton {
   private static final String KEY_MANAGEMENT_PATH = "management.context-path";
 
   private static final String KEY_MANAGEMENT_ADDRESS = "management.address";
-  private final DefaultListableBeanFactory beanFactory;
   private final DiscoveryClient discoveryClient;
 
   private final RestTemplate restTemplate;
 
-  public NacosInstanceProvider(DefaultListableBeanFactory beanFactory,
+  public NacosInstanceProvider(
     DiscoveryClient discoveryClient, RestTemplate restTemplate) {
-    this.beanFactory = beanFactory;
     this.discoveryClient = discoveryClient;
     this.restTemplate = restTemplate;
   }
@@ -120,7 +118,7 @@ public class NacosInstanceProvider implements SmartInitializingSingleton {
       put(instance.getServiceId(),
 //        UriComponentsBuilder.fromUri(getManagementUrl(instance))
 //        UriComponentsBuilder.fromUri(getServiceUrl(instance))
-        UriComponentsBuilder.fromHttpUrl("http://user")
+        UriComponentsBuilder.fromHttpUrl("http://"+instance.getServiceId())
           .path("/actuator/auth")
           .build()
           .toUri());

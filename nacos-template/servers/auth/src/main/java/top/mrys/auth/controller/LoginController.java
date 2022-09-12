@@ -1,5 +1,7 @@
 package top.mrys.auth.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,12 +16,14 @@ import top.mrys.core.Result;
  */
 @RestController
 @RequestMapping("/login")
+@Tag(name = "用户认证")
 public class LoginController {
 
   @Autowired
   private UserApi userApi;
 
   @GetMapping("/password")
+  @Operation(summary = "密码登录")
   public Result<String> password(@RequestParam(required = false) String username, @RequestParam(required = false) String password) {
     return userApi.get(username).mapOK(userDTO -> {
         if (userDTO.getPassword().equals(password)){

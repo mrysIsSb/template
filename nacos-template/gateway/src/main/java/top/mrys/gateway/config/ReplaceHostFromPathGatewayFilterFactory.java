@@ -17,6 +17,8 @@ import org.springframework.web.util.UriComponentsBuilder;
  */
 public class ReplaceHostFromPathGatewayFilterFactory extends AbstractGatewayFilterFactory<Object> {
 
+  public static final String SERVER_ID = "replaceHostFromPath_serverId";
+
   @Override
   public GatewayFilter apply(Object config) {
     return (exchange, chain) -> {
@@ -33,6 +35,8 @@ public class ReplaceHostFromPathGatewayFilterFactory extends AbstractGatewayFilt
       if (newPath.length() > 1 && path.endsWith("/")) {
         newPath.append('/');
       }
+
+      exchange.getAttributes().put(SERVER_ID, originalParts[0]);
 
       ServerHttpRequest newRequest = request.mutate()
         .uri(UriComponentsBuilder.newInstance()
@@ -57,7 +61,6 @@ public class ReplaceHostFromPathGatewayFilterFactory extends AbstractGatewayFilt
 
       exchange.getAttributes().put(GATEWAY_REQUEST_URL_ATTR,
         newRequest.getURI());
-
       return chain.filter(exchange.mutate().request(newRequest).build());
     };
   }
