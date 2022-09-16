@@ -21,6 +21,10 @@ public class ResultException extends RuntimeException {
     this.msg = msg;
   }
 
+  public static ResultException create(String msg) {
+    return new ResultException(-1, msg);
+  }
+
   public int getCode() {
     return code;
   }
@@ -36,5 +40,7 @@ public class ResultException extends RuntimeException {
   public void setMsg(String msg) {
     this.msg = msg;
   }
+
+
 }
 
