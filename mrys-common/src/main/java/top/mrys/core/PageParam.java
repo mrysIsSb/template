@@ -32,5 +32,9 @@ public class PageParam {
     pageParam.setSize(size);
     return pageParam;
   }
+  //toString
+  public String toString() {
+    return "PageParam{current=%d, size=%d}".formatted(current, size);
+  }
 
 }
