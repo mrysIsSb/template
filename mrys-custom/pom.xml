@@ -9,6 +9,7 @@
   <version>1.0-SNAPSHOT</version>
   <modules>
     <module>mrys-mybatis-plus</module>
+    <module>mrys-spring</module>
   </modules>
 
   <name>mrys-custom</name>
@@ -33,6 +34,13 @@
         <artifactId>mrys-common</artifactId>
         <version>${mrys-common.version}</version>
       </dependency>
+
+      <dependency>
+        <groupId>top.mrys</groupId>
+        <artifactId>mrys-spring</artifactId>
+        <version>${mrys-common.version}</version>
+      </dependency>
+
 
       <dependency>
         <groupId>cn.hutool</groupId>

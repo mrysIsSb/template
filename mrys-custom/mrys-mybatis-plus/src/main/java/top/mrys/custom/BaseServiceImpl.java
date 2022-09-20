@@ -41,7 +41,6 @@ public class BaseServiceImpl<M extends BaseMapper<T>, T> implements BaseService<
     return baseMapper.selectById(id);
   }
 
-
   @Override
   public Boolean insert(T t) {
     if (checkExist(t)) {
@@ -63,10 +62,9 @@ public class BaseServiceImpl<M extends BaseMapper<T>, T> implements BaseService<
         Object value = ReflectUtil.getFieldValue(t, column.getProperty());
         if (Objects.isNull(value)) {
           ReflectUtil.setFieldValue(t, column.getProperty(),
-            column.getField().getAnnotation(DBFill.class).value()..get());
+            SpringTool.getBean(column.getField().getAnnotation(DBFill.class).value()));
         }
       });
-
   }
 
   protected boolean checkExist(T t) {

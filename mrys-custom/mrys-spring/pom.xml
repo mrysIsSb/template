@@ -7,34 +7,19 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>mrys-mybatis-plus</artifactId>
-  <name>Archetype - mrys-mybatis-plus</name>
+  <artifactId>mrys-spring</artifactId>
+  <name>Archetype - mrys-spring</name>
   <url>http://maven.apache.org</url>
+
   <dependencies>
-
     <dependency>
-      <groupId>top.mrys</groupId>
-      <artifactId>mrys-common</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>top.mrys</groupId>
-      <artifactId>mrys-spring</artifactId>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
     </dependency>
 
     <dependency>
       <groupId>cn.hutool</groupId>
       <artifactId>hutool-core</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>com.baomidou</groupId>
-      <artifactId>mybatis-plus-boot-starter</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>mysql</groupId>
-      <artifactId>mysql-connector-java</artifactId>
     </dependency>
   </dependencies>
 </project>
