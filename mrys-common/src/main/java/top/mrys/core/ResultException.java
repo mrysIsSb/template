@@ -9,6 +9,10 @@ public class ResultException extends RuntimeException {
 
   private String msg;
 
+  public ResultException(String msg) {
+    super(msg);
+    this.msg = msg;
+  }
   public ResultException(int code, String msg) {
     super(msg);
     this.code = code;

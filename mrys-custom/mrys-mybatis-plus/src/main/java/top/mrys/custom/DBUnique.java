@@ -8,8 +8,7 @@ import java.lang.annotation.Target;
 
 /**
  * 数据唯一
- * 2022-04-13
- * by: mrys
+ * @author mrys
  */
 @Target({ElementType.FIELD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)

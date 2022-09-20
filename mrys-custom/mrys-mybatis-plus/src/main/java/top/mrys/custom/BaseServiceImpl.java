@@ -61,30 +61,37 @@ public class BaseServiceImpl<M extends BaseMapper<T>, T> implements BaseService<
       .forEach(column -> {
         Object value = ReflectUtil.getFieldValue(t, column.getProperty());
         if (Objects.isNull(value)) {
-          ReflectUtil.setFieldValue(t, column.getProperty(),
-            SpringTool.getBean(column.getField().getAnnotation(DBFill.class).value()));
+          DBFillData dbFillData = SpringTool.getBean(
+            column.getField().getAnnotation(DBFill.class).value());
+          dbFillData.fill(t, column.getField(), type);
         }
       });
   }
 
   protected boolean checkExist(T t) {
     TableInfo tableInfo = TableInfoHelper.getTableInfo(t.getClass());
+    //获取主键
     String idColumn = tableInfo.getKeyColumn();
     Map<String, String> names = new HashMap<>();
-    List<TableFieldInfo> uniqueColumns = tableInfo.getFieldList().stream()
+    List<TableFieldInfo> uniqueColumns = tableInfo.getFieldList()
+      .stream()
       .filter(column -> column.getField().getAnnotation(DBUnique.class) != null)
       .peek(column -> names.put(column.getColumn(),
         column.getField().getAnnotation(DBUnique.class).value()))
       .collect(Collectors.toList());
+    //有唯一字段
     if (CollUtil.isNotEmpty(uniqueColumns)) {
-      long count = uniqueColumns.stream()
+      long count = uniqueColumns
+        .stream()
         .map(column -> ReflectUtil.getFieldValue(t, column.getProperty()))
         .filter(Objects::nonNull)
         .count();
+      // 有值
       if (count > 0) {
         QueryWrapper<T> wrapper = new QueryWrapper<>();
         Object idValue = ReflectUtil.getFieldValue(t, tableInfo.getKeyProperty());
         if (Objects.nonNull(idValue)) {
+          //id不等于
           wrapper.ne(idColumn, idValue);
         }
         StringBuilder sb = new StringBuilder();
@@ -105,17 +112,26 @@ public class BaseServiceImpl<M extends BaseMapper<T>, T> implements BaseService<
     return false;
   }
 
+  /**
+   * 根据id来修改
+   *
+   * @author mrys
+   */
   @Override
   public Boolean updateById(T t) {
     customUpdate(t);
     if (checkExist(t)) {
-      //存在
       return false;
     }
     fillData(t, EnumActionType.UPDATE);
     return 1 == baseMapper.updateById(t);
   }
 
+  /**
+   * 自定义修改参数
+   *
+   * @author mrys
+   */
   protected void customUpdate(T t) {
 
   }
