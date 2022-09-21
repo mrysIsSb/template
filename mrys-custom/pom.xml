@@ -10,6 +10,7 @@
   <modules>
     <module>mrys-mybatis-plus</module>
     <module>mrys-spring</module>
+    <module>mrys-valid</module>
   </modules>
 
   <name>mrys-custom</name>
@@ -45,6 +46,12 @@
       <dependency>
         <groupId>cn.hutool</groupId>
         <artifactId>hutool-core</artifactId>
+        <version>${hutool.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>cn.hutool</groupId>
+        <artifactId>hutool-json</artifactId>
         <version>${hutool.version}</version>
       </dependency>
 
