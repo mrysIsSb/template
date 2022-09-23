@@ -12,6 +12,7 @@
     <module>mrys-spring</module>
     <module>mrys-rabbitmq</module>
     <module>mrys-mq</module>
+      <module>mrys-web</module>
   </modules>
 
   <name>mrys-custom</name>
