@@ -8,7 +8,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>mrys-spring</artifactId>
-  <name>Archetype - mrys-spring</name>
+  <name>mrys-spring</name>
   <url>http://maven.apache.org</url>
 
   <dependencies>
