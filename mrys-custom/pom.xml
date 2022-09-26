@@ -14,6 +14,7 @@
     <module>mrys-rabbitmq</module>
     <module>mrys-mq</module>
       <module>mrys-web</module>
+      <module>mrys-es</module>
   </modules>
 
   <name>mrys-custom</name>

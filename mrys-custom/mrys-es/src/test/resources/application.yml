@@ -1,0 +1,6 @@
+spring:
+  elasticsearch:
+    rest:
+      uris: ${elasticsearch.hosts:localhost:9200}
+      username: ${elasticsearch.username:elastic}
+      password: ${elasticsearch.password:changeme}
