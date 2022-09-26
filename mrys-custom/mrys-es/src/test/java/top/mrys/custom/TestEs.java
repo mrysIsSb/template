@@ -3,7 +3,13 @@ package top.mrys.custom;
 
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch._types.SortOrder;
+import co.elastic.clients.json.jackson.JacksonJsonpMapper;
+import co.elastic.clients.transport.ElasticsearchTransport;
+import co.elastic.clients.transport.rest_client.RestClientTransport;
 import lombok.SneakyThrows;
+import org.apache.http.HttpHost;
 import org.elasticsearch.client.RestClient;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -96,7 +102,27 @@ public class TestEs {
     JSONObject query = JSONUtil.createObj();
     query.putByPath("query.match.name", "new name");
     Object search = esTemplate.search(searchOption,
-        query, Goods.class);
+      query, Goods.class);
     System.out.println(search);
+  }
+
+  @Test
+  @SneakyThrows
+  public void testHighLevelClient() {
+    RestClient httpClient = RestClient.builder(
+      new HttpHost("localhost", 9200)
+    ).build();
+
+// Create the Java API Client with the same low level client
+    ElasticsearchTransport transport = new RestClientTransport(
+      httpClient,
+      new JacksonJsonpMapper()
+    );
+
+
+    ElasticsearchClient esClient = new ElasticsearchClient(transport);
+    esClient.search(s -> s.index("goods").from(1).size(10)
+      .sort(srt -> srt.field(fi -> fi.field("price").order(SortOrder.Desc)))
+      .query(q -> q.match(m -> m.field("name").query("name"))), Goods.class);
   }
 }

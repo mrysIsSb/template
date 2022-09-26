@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(ElasticsearchRestClientProperties.class)
 public class AutoConfigurationEs {
 
-  @Bean
+  @Bean(destroyMethod = "close")
   public RestClient restClient(ElasticsearchRestClientProperties properties) {
     RestClientBuilder builder = RestClient.builder(properties.getUris().stream()
       .map(HttpHost::create)

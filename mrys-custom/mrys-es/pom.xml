@@ -27,10 +27,15 @@
       <artifactId>elasticsearch</artifactId>
       <version>${elasticsearch.version}</version>
     </dependency>
+    <dependency>
+      <groupId>co.elastic.clients</groupId>
+      <artifactId>elasticsearch-java</artifactId>
+      <version>${elasticsearch.version}</version>
+    </dependency>
 <!--    <dependency>-->
 <!--      <groupId>org.elasticsearch.client</groupId>-->
 <!--      <artifactId>elasticsearch-rest-high-level-client</artifactId>-->
-<!--      <version>${elasticsearch.version}2</version>-->
+<!--      <version>7.17.4</version>-->
 <!--    </dependency>-->
     <dependency>
       <groupId>org.elasticsearch.client</groupId>
