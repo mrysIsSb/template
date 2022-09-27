@@ -4,7 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 
 /**
  * 转换器
- * @Author mrys
+ * @author mrys
  */
 public interface PojoConvert<T> {
 
