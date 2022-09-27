@@ -1,0 +1,30 @@
+package top.mrys.custom.mvc;
+
+import org.springframework.http.HttpMethod;
+import top.mrys.custom.Request;
+
+import javax.servlet.http.HttpServletRequest;
+
+public class MvcRequest implements Request {
+
+  private final HttpServletRequest request;
+
+  public MvcRequest(HttpServletRequest request) {
+    this.request = request;
+  }
+
+  @Override
+  public HttpMethod getMethod() {
+    return HttpMethod.resolve(request.getMethod());
+  }
+
+  @Override
+  public String getPath() {
+    return request.getRequestURI();
+  }
+
+  @Override
+  public String getHeader(String name) {
+    return request.getHeader(name);
+  }
+}
