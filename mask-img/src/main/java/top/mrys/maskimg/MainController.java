@@ -93,7 +93,7 @@ public class MainController implements ControllerInit {
   @FXML
   public void selectMaskImg(ActionEvent actionEvent) {
     fileChooser.setTitle("选择水印图片");
-    fileChooser.setInitialDirectory(new File("C:\\Users\\Dell\\Desktop"));
+    fileChooser.setInitialDirectory(null);
     fileChooser.getExtensionFilters().addAll(
       new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.gif"),
       new FileChooser.ExtensionFilter("All Files", "*.*"));
@@ -106,7 +106,7 @@ public class MainController implements ControllerInit {
   @FXML
   public void selectSrcImg(ActionEvent actionEvent) {
     directoryChooser.setTitle("选择源图片目录");
-    directoryChooser.setInitialDirectory(new File("C:\\Users\\Dell\\Desktop"));
+    directoryChooser.setInitialDirectory(null);
     File selectedDirectory = directoryChooser.showDialog(null);
     if (selectedDirectory != null) {
       srcImgPathStr = selectedDirectory.getAbsolutePath();
