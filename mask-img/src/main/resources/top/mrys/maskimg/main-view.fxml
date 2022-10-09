@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox nodeOrientation="LEFT_TO_RIGHT" prefHeight="600" prefWidth="500" spacing="20.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="top.mrys.maskimg.MainController">
+    <HBox>
+        <Button onAction="#selectMaskImg" text="选择水印图">
+         <styleClass>
+            <String fx:value="btn-default" />
+            <String fx:value="btn-sm" />
+         </styleClass></Button>
+        <Label fx:id="maskImgPath" disable="true" />
+    </HBox>
+    <HBox>
+        <Button onAction="#selectSrcImg" text="选择源图文件夹">
+            <styleClass>
+                <String fx:value="btn-default" />
+                <String fx:value="btn-sm" />
+            </styleClass>
+        </Button>
+        <Label fx:id="srcImgPath" disable="true" />
+    </HBox>
+    <HBox>
+        <Label text="图片类型:" />
+        <Label prefWidth="12" />
+        <TextField fx:id="imgType" onAction="#imgTypeChange" />
+        <Button fx:id="scanButton" disable="true" onAction="#scan" text="扫描" />
+    </HBox>
+    <HBox>
+        <Button fx:id="maskButton" onAction="#mask" text="打水印">
+            <styleClass>
+                <String fx:value="btn-primary" />
+                <String fx:value="btn-sm" />
+            </styleClass>
+        </Button>
+        <Label prefWidth="12" />
+        <Label text="线程数：" />
+        <Label prefWidth="12" />
+        <Spinner fx:id="threadNum"/>
+    </HBox>
+    <ProgressBar fx:id="progressBar" maxHeight="8" minHeight="8.0" prefWidth="Infinity" progress="0" />
+<!--   <TextArea fx:id="logPane" prefHeight="300" prefWidth="Infinity" />-->
+    <ScrollPane fx:id="logPane" hbarPolicy="NEVER" prefHeight="300" prefWidth="Infinity" vbarPolicy="ALWAYS">
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0"/>
+    </ScrollPane>
+    <padding>
+        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+    </padding>
+</VBox>
