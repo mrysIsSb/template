@@ -1,0 +1,159 @@
+GET http://localhost:9200/api/item?id=99
+Accept: application/json
+
+<> 2022-10-10T101113.405.json
+
+### 创建索引
+PUT http://localhost:9200/goods
+Content-Type: application/json
+
+{
+  "mappings": {
+    "properties": {
+      "id": {
+        "type": "keyword"
+      },
+      "fullText": {
+        "type": "text",
+        "analyzer": "whitespace"
+      },
+      "title": {
+        "type": "text",
+        "analyzer": "whitespace"
+      },
+      "type": {
+        "type": "keyword"
+      },
+      "createTime": {
+        "type": "date",
+        "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis"
+      }
+    }
+  }
+}
+
+<> 2022-10-10T101435.200.json
+<> 2022-10-10T101358.405.json
+
+### 查询索引
+GET http://localhost:9200/goods/_mapping
+
+<> 2022-10-10T101502.200.json
+
+### 创建文档1
+PUT http://localhost:9200/goods/_doc/1
+content-type: application/json
+
+{
+  "id": "1",
+  "fullText": "小米手机",
+  "title": "小米手机",
+  "type": "手机",
+  "createTime": "2020-10-10 10:10:10"
+}
+<> 2022-10-10T101549.200.json
+<> 2022-10-10T101546.201.json
+<> 2022-10-10T101526.400.json
+
+### 创建文档2
+PUT http://localhost:9200/goods/_doc/2
+content-type: application/json
+
+{
+  "id": "2",
+  "fullText": "华为手机",
+  "title": "华为手机",
+  "type": "手机",
+  "createTime": "2020-10-10 10:10:10"
+}
+
+<> 2022-10-10T101613.201.json
+
+### 创建文档3
+PUT http://localhost:9200/goods/_doc/3
+content-type: application/json
+
+{
+  "id": "3",
+  "fullText": "苹果手机",
+  "title": "苹果手机",
+  "type": "手机",
+  "createTime": "2020-10-10 10:10:10"
+}
+
+<> 2022-10-10T101623.201.json
+
+### 创建文档4
+PUT http://localhost:9200/goods/_doc/4
+content-type: application/json
+
+{
+  "id": "4",
+  "fullText": "小米电视",
+  "title": "小米电视",
+  "type": "电视",
+  "createTime": "2020-10-10 10:10:10"
+}
+
+<> 2022-10-10T101635.201.json
+
+### 查询文档
+GET http://localhost:9200/goods/_search
+content-type: application/json
+
+{
+  "from": 0,
+  "size": 10,
+  "timeout": "2s",
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "match": {
+            "fullText": "小米电视"
+          }
+        }
+      ]
+    }
+  },
+  "sort": [
+    {
+      "_score": {
+        "order": "desc"
+      }
+    },
+    {
+      "createTime": {
+        "order": "desc"
+      }
+    }
+  ],
+  "aggregations":{
+    "types":{
+      "terms":{
+        "field":"type",
+        "size":50
+      }
+    }
+  },
+  "highlight": {
+    "pre_tags": [
+      "<b style='color: red'>"
+    ],
+    "post_tags": [
+      "</b>"
+    ],
+    "fields": {
+      "fullText": {}
+    }
+  }
+}
+
+<> 2022-10-10T102010.200.json
+<> 2022-10-10T101944.200.json
+<> 2022-10-10T101932.200.json
+<> 2022-10-10T101814.200.json
+<> 2022-10-10T101755.200.json
+<> 2022-10-10T101740.200.json
+<> 2022-10-10T101725.200.json
+<> 2022-10-10T101701.200.json
