@@ -28,4 +28,8 @@ public class Goods {
   private String brand;
 
   private Date createTime;
+
+  private String fullText;
+
+  private String title;
 }
