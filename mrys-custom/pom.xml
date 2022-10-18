@@ -16,6 +16,7 @@
       <module>mrys-web</module>
       <module>mrys-es</module>
       <module>mrys-security</module>
+      <module>mrys-log</module>
   </modules>
 
   <name>mrys-custom</name>
