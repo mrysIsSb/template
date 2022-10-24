@@ -61,6 +61,7 @@ public class AutoConfigurationSecurity {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+      // 将权限过滤器添加到拦截器
       registry.addInterceptor(new HandlerInterceptor() {
         @Override
         public boolean preHandle(javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse response, Object handler) throws Exception {
