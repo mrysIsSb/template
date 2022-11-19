@@ -153,6 +153,9 @@ public class Result<T> {
     return newInstance(-1, msg, null);
   }
 
+  public static <T> Result<T> error(int code, String msg) {
+    return newInstance(code, msg, null);
+  }
   public static <T> Result<T> assert0(boolean b, String msg, T data) {
     if (b) {
       return ok(data);

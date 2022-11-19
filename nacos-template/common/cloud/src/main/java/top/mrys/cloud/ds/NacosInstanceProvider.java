@@ -1,14 +1,7 @@
-package top.mrys.auth.ds;
+package top.mrys.cloud.ds;
 
-import static org.springframework.util.StringUtils.isEmpty;
-
-import cn.hutool.json.JSONUtil;
-import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.SmartInitializingSingleton;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
@@ -18,15 +11,19 @@ import org.springframework.cloud.client.discovery.event.ParentHeartbeatEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.springframework.util.StringUtils.isEmpty;
 
 /**
  * @author mrys
  */
 @Slf4j
 @Component
-//@ConditionalOnCloudPlatform(CloudPlatform.CLOUD_FOUNDRY)
 public class NacosInstanceProvider implements SmartInitializingSingleton {
 
   private static final String KEY_MANAGEMENT_PORT = "management.port";
@@ -36,35 +33,30 @@ public class NacosInstanceProvider implements SmartInitializingSingleton {
   private static final String KEY_MANAGEMENT_ADDRESS = "management.address";
   private final DiscoveryClient discoveryClient;
 
-  private final RestTemplate restTemplate;
 
-  public NacosInstanceProvider(
-    DiscoveryClient discoveryClient, RestTemplate restTemplate) {
+  public NacosInstanceProvider(DiscoveryClient discoveryClient) {
     this.discoveryClient = discoveryClient;
-    this.restTemplate = restTemplate;
   }
 
   @EventListener
   public void onApplicationReady(ApplicationReadyEvent event) {
-    log.info("onApplicationReady:{}", event);
-    discover();
+    log.info("onApplicationReady");
   }
 
   @EventListener
   public void onInstanceRegistered(InstanceRegisteredEvent<?> event) {
-    log.info("onInstanceRegistered:{}", event);
-    discover();
+    log.info("onInstanceRegistered");
   }
 
   @EventListener
   public void onParentHeartbeat(ParentHeartbeatEvent event) {
-    log.info("onParentHeartbeat:{}",event.getValue());
+    log.info("onParentHeartbeat");
     discoverIfNeeded(event.getValue());
   }
 
   @EventListener
   public void onApplicationEvent(HeartbeatEvent event) {
-    log.info("onApplicationEvent:{}", event.getValue());
+    log.info("onApplicationEvent");
     discoverIfNeeded(event.getValue());
   }
 
@@ -96,11 +88,11 @@ public class NacosInstanceProvider implements SmartInitializingSingleton {
   private void register(Map<String, URI> map) {
     map.forEach((k, v) -> {
       log.info("register {} {}", k, v);
-      try{
+      try {
         ResponseEntity<String> resp = restTemplate.getForEntity(v, String.class);
         log.info("resp:{}", resp);
-      }catch (Exception e){
-        log.error("error",e);
+      } catch (Exception e) {
+        log.error("error", e);
       }
     });
   }
@@ -117,7 +109,7 @@ public class NacosInstanceProvider implements SmartInitializingSingleton {
       put(instance.getServiceId(),
 //        UriComponentsBuilder.fromUri(getManagementUrl(instance))
 //        UriComponentsBuilder.fromUri(getServiceUrl(instance))
-        UriComponentsBuilder.fromHttpUrl("http://"+instance.getServiceId())
+        UriComponentsBuilder.fromHttpUrl("http://" + instance.getServiceId())
           .path("/actuator/auth")
           .build()
           .toUri());

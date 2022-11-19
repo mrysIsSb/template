@@ -11,6 +11,7 @@
     <module>gateway</module>
     <module>admin</module>
     <module>common/mrys-feign</module>
+      <module>common/cloud</module>
   </modules>
   <parent>
     <groupId>org.springframework.boot</groupId>
