@@ -8,7 +8,7 @@ public class FilterChain {
   private int index = 0;
 
   //TODO 2022年10月24日 filters要排序
-  private LinkedList<SecurityFilter> filters;
+  private final LinkedList<SecurityFilter> filters=new LinkedList<>();
 
   public FilterChain(List<SecurityFilter> filters) {
     this.filters.addAll(filters);

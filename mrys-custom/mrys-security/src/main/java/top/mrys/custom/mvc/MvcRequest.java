@@ -1,9 +1,8 @@
 package top.mrys.custom.mvc;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpMethod;
 import top.mrys.custom.Request;
-
-import javax.servlet.http.HttpServletRequest;
 
 public class MvcRequest implements Request {
 
@@ -15,7 +14,7 @@ public class MvcRequest implements Request {
 
   @Override
   public HttpMethod getMethod() {
-    return HttpMethod.resolve(request.getMethod());
+    return HttpMethod.valueOf(request.getMethod());
   }
 
   @Override

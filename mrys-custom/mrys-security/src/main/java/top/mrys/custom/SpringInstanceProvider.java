@@ -5,6 +5,10 @@ import org.springframework.context.ApplicationContext;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * spring bean 实例提供者
+ * 从spring容器中获取bean
+ */
 public class SpringInstanceProvider implements InstanceProvider {
 
   private final ApplicationContext applicationContext;

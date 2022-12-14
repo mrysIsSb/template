@@ -2,11 +2,11 @@ package top.mrys.custom.mvc;
 
 import top.mrys.custom.Response;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 public class MvcResponse implements Response {
 
-  private final javax.servlet.http.HttpServletResponse response;
+  private final HttpServletResponse response;
 
   public MvcResponse(HttpServletResponse response) {
     this.response = response;

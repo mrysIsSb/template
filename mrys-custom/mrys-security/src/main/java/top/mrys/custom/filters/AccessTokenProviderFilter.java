@@ -1,5 +1,6 @@
 package top.mrys.custom.filters;
 
+import lombok.extern.slf4j.Slf4j;
 import top.mrys.custom.FilterChain;
 import top.mrys.custom.SecurityFilter;
 import top.mrys.custom.ServerExchange;
@@ -11,6 +12,7 @@ import java.util.Objects;
  *
  * @author mrys
  */
+@Slf4j
 public class AccessTokenProviderFilter implements SecurityFilter {
 
   @Override
@@ -23,6 +25,7 @@ public class AccessTokenProviderFilter implements SecurityFilter {
       .filter(Objects::nonNull)
       .findFirst()
       .ifPresent(accessToken -> {
+        log.debug("access token:{}", accessToken);
         //如果存在 设置access token
         exchange.getSecurityContext().setAuthentication(new AccessTokenAuthentication(accessToken));
       });
