@@ -9,6 +9,7 @@ import java.util.Objects;
 
 /**
  * access token filter
+ * 获取access token
  *
  * @author mrys
  */

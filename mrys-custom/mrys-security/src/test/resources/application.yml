@@ -1,0 +1,14 @@
+security:
+  local:
+    enable: true
+    users:
+      - token: "test_access_token"
+        userId: mrys
+        userName: "伊杰"
+        roles:
+          - "ROLE_USER"
+          - "ROLE_ADMIN"
+logging:
+  level:
+    root: info
+    top.mrys: debug

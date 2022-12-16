@@ -1,2 +1,4 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   top.mrys.custom.AutoConfigurationSecurity
+org.springframework.boot.SpringApplicationRunListener=\
+  top.mrys.custom.CustomSpringApplicationRunListener

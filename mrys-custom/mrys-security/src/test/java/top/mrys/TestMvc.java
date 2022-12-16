@@ -19,18 +19,19 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 public class TestMvc {
 
 
-    @Autowired
-    private MockMvc mockMvc;
+  @Autowired
+  private MockMvc mockMvc;
 
-    @Test
-    public void testGet() throws Exception {
-        MockHttpServletRequestBuilder param = MockMvcRequestBuilders
-                .get("/test/test1?name={name}", "mrys")
-                .accept("application/json");
+  @Test
+  public void testGet() throws Exception {
+    MockHttpServletRequestBuilder param = MockMvcRequestBuilders
+      .get("/test/test1?name={name}", "mrys")
+      .header("access-token", "test_access_token")
+      .accept("application/json");
 
-        mockMvc.perform(param)
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string("test1mrys"))
-                .andDo(MockMvcResultHandlers.print());
-    }
+    mockMvc.perform(param)
+      .andExpect(MockMvcResultMatchers.status().isOk())
+      .andExpect(MockMvcResultMatchers.content().string("test1mrys"))
+      .andDo(MockMvcResultHandlers.print());
+  }
 }

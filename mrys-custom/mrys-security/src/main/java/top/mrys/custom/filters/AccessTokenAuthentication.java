@@ -1,11 +1,16 @@
 package top.mrys.custom.filters;
 
+import lombok.Setter;
 import top.mrys.custom.Authentication;
+import top.mrys.custom.UserInfo;
 
 public class AccessTokenAuthentication implements Authentication {
 
   private String accessToken;
+  @Setter
   private boolean authenticated;
+
+  private UserInfo userInfo;
 
   public AccessTokenAuthentication(String accessToken) {
     this.accessToken = accessToken;
@@ -19,5 +24,13 @@ public class AccessTokenAuthentication implements Authentication {
 
   public String getAccessToken() {
     return accessToken;
+  }
+
+  public <T extends UserInfo> void setUserInfo(T userInfo) {
+    this.userInfo = userInfo;
+  }
+  @Override
+  public <T extends UserInfo> T getUserInfo() {
+    return (T) userInfo;
   }
 }

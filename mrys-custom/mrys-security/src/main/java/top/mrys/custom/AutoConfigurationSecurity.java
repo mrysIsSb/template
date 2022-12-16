@@ -1,24 +1,36 @@
 package top.mrys.custom;
 
+import jakarta.servlet.Filter;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.server.ServerWebExchange;
+import org.springframework.web.server.WebFilter;
+import org.springframework.web.server.WebFilterChain;
+import reactor.core.publisher.Mono;
 import top.mrys.custom.filters.*;
+import top.mrys.custom.filters.authenticate.PropertiesTokenAuthenticateProvider;
 import top.mrys.custom.mvc.MvcRequest;
 import top.mrys.custom.mvc.MvcResponse;
 import top.mrys.custom.mvc.MvcServerExchange;
 
+import java.io.IOException;
 import java.util.List;
 
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnWebApplication
+@EnableConfigurationProperties(SecurityProperties.class)
 @Slf4j
 public class AutoConfigurationSecurity {
 
@@ -48,9 +60,16 @@ public class AutoConfigurationSecurity {
     return new AccessTokenAuthenticateFilter();
   }
 
+  @Bean
+  @ConditionalOnProperty(prefix = "security.local", name = "enable", havingValue = "true")
+  public PropertiesTokenAuthenticateProvider propertiesTokenAuthenticateProvider(SecurityProperties securityProperties) {
+    return new PropertiesTokenAuthenticateProvider(securityProperties.getLocal().getUsers());
+  }
+
+
   @Configuration(proxyBeanMethods = false)
   @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
-  public static class WebMvcConfig implements WebMvcConfigurer {
+  public static class WebMvcConfig implements Filter {
 
     @Autowired
     private List<SecurityFilter> filters;
@@ -62,26 +81,48 @@ public class AutoConfigurationSecurity {
     private ApplicationContext applicationContext;
 
     @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-      log.info("mvc 添加权限拦截器");
-      // 将权限过滤器添加到拦截器
-      registry.addInterceptor(new HandlerInterceptor() {
-        @Override
-        public boolean preHandle(jakarta.servlet.http.HttpServletRequest request, jakarta.servlet.http.HttpServletResponse response, Object handler) throws Exception {
-          FilterChain chain = new FilterChain(filters);
-          MvcRequest mvcRequest = new MvcRequest(request);
+    public void doFilter(ServletRequest request, ServletResponse response, jakarta.servlet.FilterChain chain) throws IOException, ServletException {
+      log.debug("构建权限过滤器");
+        filters.add((exchange, chain1) -> {
+            try {
+                chain.doFilter(request, response);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+      top.mrys.custom.FilterChain filterChain = new top.mrys.custom.FilterChain(filters);
 
-          MvcResponse mvcResponse = new MvcResponse(response);
+    MvcRequest mvcRequest = new MvcRequest((HttpServletRequest) request);
 
-          SpringInstanceProvider instanceProvider = new SpringInstanceProvider(applicationContext);
+    MvcResponse mvcResponse = new MvcResponse((HttpServletResponse) response);
 
-          ServerExchange exchange = new MvcServerExchange(mvcRequest, mvcResponse, securityContext, instanceProvider);
-          chain.doFilter(exchange);
-          return true;
-        }
-      });
+    SpringInstanceProvider instanceProvider = new SpringInstanceProvider(applicationContext);
+
+    ServerExchange exchange = new MvcServerExchange(mvcRequest, mvcResponse, securityContext, instanceProvider);
+    filterChain.doFilter(exchange);
     }
   }
-
 //TODO 2022年9月27日 支持webflux
+
+  @Configuration(proxyBeanMethods = false)
+  @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
+  public static class WebFluxConfig implements WebFilter {
+
+//    @Autowired
+//    private List<SecurityFilter> filters;
+//
+//    @Autowired
+//    private SecurityContext securityContext;
+//
+//    @Autowired
+//    private ApplicationContext applicationContext;
+
+    @Override
+    public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
+      log.debug("构建权限过滤器");
+
+      return chain.filter(exchange);
+    }
+
+  }
 }

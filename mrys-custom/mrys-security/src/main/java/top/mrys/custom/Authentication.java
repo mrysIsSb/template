@@ -7,5 +7,6 @@ public interface Authentication {
    */
   boolean isAuthenticated();
 
+  <T extends UserInfo> T getUserInfo();
 
 }

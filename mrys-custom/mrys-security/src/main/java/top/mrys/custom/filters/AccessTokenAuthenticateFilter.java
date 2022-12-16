@@ -20,11 +20,13 @@ public class AccessTokenAuthenticateFilter implements SecurityFilter {
       chain.doFilter(exchange);
     } else {
       exchange.getSecurityContext()
-        .setAuthentication(exchange.instanceProvider().getInstances(AccessTokenAuthenticateProvider.class).stream()
+        .setAuthentication(exchange.instanceProvider()
+          .getInstances(AccessTokenAuthenticateProvider.class)
+          .stream()
           .map(provider -> provider.authenticate(authentication))
-          .filter(auth -> auth != null && auth.isAuthenticated())
+          .filter(auth -> auth != null && auth.isAuthenticated())//
           .findFirst()
-          .orElseThrow(() -> new AuthenticationException("access token invalid")));//如果没有认证成功 抛出异常
+          .orElseThrow(() -> new AuthenticationException("无效的token")));//如果没有认证成功 抛出异常
       chain.doFilter(exchange);
     }
   }
