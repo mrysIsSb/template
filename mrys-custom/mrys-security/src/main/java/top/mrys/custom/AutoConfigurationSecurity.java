@@ -108,20 +108,21 @@ public class AutoConfigurationSecurity {
   @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
   public static class WebFluxConfig implements WebFilter {
 
-//    @Autowired
-//    private List<SecurityFilter> filters;
-//
-//    @Autowired
-//    private SecurityContext securityContext;
-//
-//    @Autowired
-//    private ApplicationContext applicationContext;
+    @Autowired
+    private List<SecurityFilter> filters;
+
+    @Autowired
+    private SecurityContext securityContext;
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-      log.debug("构建权限过滤器");
-
-      return chain.filter(exchange);
+      log.debug("构建flux权限过滤器");
+      top.mrys.custom.FilterChain filterChain = new top.mrys.custom.FilterChain(filters);
+      chain.filter(exchange);
+      return null;
     }
 
   }
