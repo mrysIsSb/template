@@ -1,12 +1,14 @@
 package top.mrys.controller;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.reactive.config.EnableWebFlux;
 import top.mrys.custom.AuthTool;
 import top.mrys.custom.UserInfo;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author mrys
@@ -19,7 +21,9 @@ import top.mrys.custom.UserInfo;
 public class TestController {
 
   @GetMapping("/test1")
+  @SneakyThrows
   public String test1(String name) {
+    TimeUnit.SECONDS.sleep(10);
     UserInfo userInfo = AuthTool.getUserInfo();
     log.info("current user {}", userInfo);
     return "test1" + name;
