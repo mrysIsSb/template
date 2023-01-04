@@ -8,7 +8,11 @@ public class AuthTool {
    * @return
    */
   public static <T extends UserInfo> T  getUserInfo() {
-    return SecurityContextHolder.getContext().getAuthentication().getUserInfo();
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    if (authentication == null) {
+      return null;
+    }
+    return authentication.getUserInfo();
   }
 
   /**
@@ -34,7 +38,8 @@ public class AuthTool {
   }
 
   public static boolean isLogin() {
-    return SecurityContextHolder.getContext().getAuthentication().isAuthenticated();
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    return authentication != null && authentication.isAuthenticated();
   }
 
   /**

@@ -16,12 +16,14 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.expression.BeanFactoryResolver;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.common.TemplateParserContext;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
+import org.springframework.http.MediaType;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
@@ -30,6 +32,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import reactor.core.publisher.Mono;
+import top.mrys.core.Result;
 import top.mrys.custom.annotations.Anno;
 import top.mrys.custom.annotations.Auth;
 import top.mrys.custom.annotations.AuthAlias;
@@ -87,10 +90,10 @@ public class AutoConfigurationSecurity {
     return new PropertiesTokenAuthenticateProvider(securityProperties.getLocal().getUsers());
   }
 
-
   @Configuration(proxyBeanMethods = false)
   @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
   public static class WebMvcConfig implements Filter, WebMvcConfigurer {
+
 
     @Autowired
     private List<SecurityFilter> filters;
@@ -161,21 +164,36 @@ public class AutoConfigurationSecurity {
       });
     }
 
-    private static boolean checkAuth(AnnotatedElement annotatedElement, StandardEvaluationContext context, ExpressionParser parser, TemplateParserContext templateParserContext) {
-      if (!AuthTool.isLogin()) {
-        throw NoLoginException.getInstance();
-      }
-      Auth auth = AnnotatedElementUtils.findMergedAnnotation(annotatedElement,Auth.class);
-      if (AnnotationUtils.isSynthesizedAnnotation(auth)) {
-        AuthAlias alias = AnnotatedElementUtils.findMergedAnnotation(annotatedElement,AuthAlias.class);
-        context.setVariable("alias", AnnotatedElementUtils.findMergedAnnotation(annotatedElement,alias.value()));
-      }
-      if (Boolean.FALSE.equals(parser.parseExpression(auth.value(), templateParserContext).getValue(context, Boolean.class))){
-        throw new AuthenticationException(parser.parseExpression(auth.msg(), templateParserContext).getValue(context, String.class));
-      }
-      return true;
+    @Bean
+    public org.springframework.web.servlet.function.RouterFunction<org.springframework.web.servlet.function.ServerResponse> loginRouterFunction() {
+      //todo 不通 需要改进
+      return org.springframework.web.servlet.function.RouterFunctions.route(org.springframework.web.servlet.function.RequestPredicates.GET("/auth/login/{type}"), request -> {
+              String type = request.pathVariable("type");
+              return org.springframework.web.servlet.function.ServerResponse.ok()
+                      .contentType(MediaType.APPLICATION_JSON)
+                      .body(Result.ok(type), ParameterizedTypeReference.forType(String.class));
+            }
+      );
     }
+
   }
+
+
+  private static boolean checkAuth(AnnotatedElement annotatedElement, StandardEvaluationContext context, ExpressionParser parser, TemplateParserContext templateParserContext) {
+    if (!AuthTool.isLogin()) {
+      throw NoLoginException.getInstance();
+    }
+    Auth auth = AnnotatedElementUtils.findMergedAnnotation(annotatedElement,Auth.class);
+    if (AnnotationUtils.isSynthesizedAnnotation(auth)) {
+      AuthAlias alias = AnnotatedElementUtils.findMergedAnnotation(annotatedElement,AuthAlias.class);
+      context.setVariable("alias", AnnotatedElementUtils.findMergedAnnotation(annotatedElement,alias.value()));
+    }
+    if (Boolean.FALSE.equals(parser.parseExpression(auth.value(), templateParserContext).getValue(context, Boolean.class))){
+      throw new AuthenticationException(parser.parseExpression(auth.msg(), templateParserContext).getValue(context, String.class));
+    }
+    return true;
+  }
+
 //TODO 2022年9月27日 支持webflux
 
   @Configuration(proxyBeanMethods = false)

@@ -84,4 +84,18 @@ public class TestMvc {
       .andExpect(MockMvcResultMatchers.content().string("testAuth3"))
       .andDo(MockMvcResultHandlers.print());
   }
+
+
+  @Test
+  public void login() throws Exception {
+    MockHttpServletRequestBuilder param = MockMvcRequestBuilders
+            .get("/auth/login/{type}", "local")
+            .accept("application/json");
+
+    mockMvc.perform(param)
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(0))
+            .andDo(MockMvcResultHandlers.print());
+  }
+
 }
