@@ -11,4 +11,8 @@ public class MvcResponse implements Response {
   public MvcResponse(HttpServletResponse response) {
     this.response = response;
   }
+
+  public HttpServletResponse getHttpServletResponse() {
+    return response;
+  }
 }

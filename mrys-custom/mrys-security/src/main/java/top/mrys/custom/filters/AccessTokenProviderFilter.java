@@ -1,6 +1,7 @@
 package top.mrys.custom.filters;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.Ordered;
 import top.mrys.custom.FilterChain;
 import top.mrys.custom.SecurityFilter;
 import top.mrys.custom.ServerExchange;
@@ -14,7 +15,7 @@ import java.util.Objects;
  * @author mrys
  */
 @Slf4j
-public class AccessTokenProviderFilter implements SecurityFilter {
+public class AccessTokenProviderFilter implements SecurityFilter, Ordered {
 
   @Override
   public void doFilter(ServerExchange exchange, FilterChain chain) {
@@ -31,5 +32,10 @@ public class AccessTokenProviderFilter implements SecurityFilter {
         exchange.getSecurityContext().setAuthentication(new AccessTokenAuthentication(accessToken));
       });
     chain.doFilter(exchange);
+  }
+
+  @Override
+  public int getOrder() {
+    return 100;
   }
 }

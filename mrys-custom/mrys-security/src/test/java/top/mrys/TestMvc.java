@@ -34,4 +34,54 @@ public class TestMvc {
       .andExpect(MockMvcResultMatchers.content().string("test1mrys"))
       .andDo(MockMvcResultHandlers.print());
   }
+
+  @Test
+  public void testAnno() throws Exception {
+    MockHttpServletRequestBuilder param = MockMvcRequestBuilders
+      .get("/test/testAnno")
+      .accept("application/json");
+
+    mockMvc.perform(param)
+      .andExpect(MockMvcResultMatchers.status().isOk())
+      .andExpect(MockMvcResultMatchers.content().string("testAnno"))
+      .andDo(MockMvcResultHandlers.print());
+  }
+
+  @Test
+  public void testAuth() throws Exception {
+    MockHttpServletRequestBuilder param = MockMvcRequestBuilders
+      .get("/test/testAuth")
+      .accept("application/json");
+
+    mockMvc.perform(param)
+      .andExpect(MockMvcResultMatchers.status().isOk())
+      .andExpect(MockMvcResultMatchers.content().string("testAuth"))
+      .andDo(MockMvcResultHandlers.print());
+  }
+
+  @Test
+  public void testAuth2() throws Exception {
+    MockHttpServletRequestBuilder param = MockMvcRequestBuilders
+      .get("/test/testAuth2")
+      .header("access-token", "test_access_token")
+      .accept("application/json");
+
+    mockMvc.perform(param)
+      .andExpect(MockMvcResultMatchers.status().isOk())
+      .andExpect(MockMvcResultMatchers.content().string("testAuth2"))
+      .andDo(MockMvcResultHandlers.print());
+  }
+
+  @Test
+  public void testAuth3() throws Exception {
+    MockHttpServletRequestBuilder param = MockMvcRequestBuilders
+      .get("/test/testAuth3")
+      .header("access-token", "test_access_token")
+      .accept("application/json");
+
+    mockMvc.perform(param)
+      .andExpect(MockMvcResultMatchers.status().isOk())
+      .andExpect(MockMvcResultMatchers.content().string("testAuth3"))
+      .andDo(MockMvcResultHandlers.print());
+  }
 }

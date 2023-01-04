@@ -26,4 +26,8 @@ public class MvcRequest implements Request {
   public String getHeader(String name) {
     return request.getHeader(name);
   }
+
+  public HttpServletRequest getHttpServletRequest() {
+    return request;
+  }
 }

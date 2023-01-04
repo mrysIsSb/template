@@ -1,16 +1,17 @@
 package top.mrys.custom.filters;
 
-import top.mrys.custom.AuthenticationException;
+import org.springframework.core.Ordered;
 import top.mrys.custom.FilterChain;
 import top.mrys.custom.SecurityFilter;
 import top.mrys.custom.ServerExchange;
+import top.mrys.custom.exceptions.InvalidTokenException;
 
 /**
  * access token filter
  *
  * @author mrys
  */
-public class AccessTokenAuthenticateFilter implements SecurityFilter {
+public class AccessTokenAuthenticateFilter implements SecurityFilter, Ordered {
   @Override
   public void doFilter(ServerExchange exchange, FilterChain chain) {
     if (exchange.getSecurityContext().getAuthentication() == null ||
@@ -26,8 +27,13 @@ public class AccessTokenAuthenticateFilter implements SecurityFilter {
           .map(provider -> provider.authenticate(authentication))
           .filter(auth -> auth != null && auth.isAuthenticated())//
           .findFirst()
-          .orElseThrow(() -> new AuthenticationException("无效的token")));//如果没有认证成功 抛出异常
+          .orElseThrow(() -> new InvalidTokenException()));//如果没有认证成功 抛出异常
       chain.doFilter(exchange);
     }
+  }
+
+  @Override
+  public int getOrder() {
+    return 200;
   }
 }
