@@ -16,6 +16,11 @@ public interface UserInfo {
 
     String getUserName();
 
+    /**
+     * 是否是超级管理员
+     */
+    boolean isSuperAdmin();
+
     List<String> getRoles();
 
     List<String> getPermissions();

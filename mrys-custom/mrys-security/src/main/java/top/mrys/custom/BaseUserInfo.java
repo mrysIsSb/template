@@ -14,6 +14,8 @@ public class BaseUserInfo implements UserInfo {
   private String userId;
   private String userName;
 
+  private boolean superAdmin = false;
+
   private List<String> roles;
 
   private List<String> permissions;

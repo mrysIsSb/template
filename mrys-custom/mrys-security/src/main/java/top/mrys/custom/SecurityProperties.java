@@ -30,6 +30,8 @@ public class SecurityProperties {
 
     private String userName;
 
+    private boolean superAdmin;
+
     private List<String> roles;
 
     private List<String> permissions;

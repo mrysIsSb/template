@@ -9,6 +9,7 @@ import top.mrys.custom.filters.AccessTokenAuthentication;
 import java.util.List;
 
 /**
+ * properties token 认证提供者
  * @author mrys
  * @date 2022/12/16 14:11
  */
@@ -31,6 +32,7 @@ public class PropertiesTokenAuthenticateProvider implements AccessTokenAuthentic
         BaseUserInfo info = new BaseUserInfo();
         info.setUserId(user.getUserId());
         info.setUserName(user.getUserName());
+        info.setSuperAdmin(user.isSuperAdmin());
         info.setRoles(user.getRoles());
         info.setPermissions(user.getPermissions());
         authentication.setUserInfo(info);

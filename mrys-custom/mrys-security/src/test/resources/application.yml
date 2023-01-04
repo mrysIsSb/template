@@ -3,8 +3,9 @@ security:
     enable: true
     users:
       - token: "test_access_token"
-        userId: mrys
-        userName: "伊杰"
+        user-id: mrys
+        super-admin: true
+        user-name: "伊杰"
         roles:
           - "ROLE_USER"
 #          - "ROLE_ADMIN"

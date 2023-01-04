@@ -37,4 +37,15 @@ public class AuthTool {
     return SecurityContextHolder.getContext().getAuthentication().isAuthenticated();
   }
 
+  /**
+   * 是否为超级管理员
+   * @return
+   */
+  public static boolean isSuperAdmin() {
+    UserInfo userInfo = getUserInfo();
+    if (userInfo == null) {
+      return false;
+    }
+    return userInfo.isSuperAdmin();
+  }
 }

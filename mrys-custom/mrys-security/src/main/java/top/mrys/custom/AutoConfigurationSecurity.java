@@ -77,11 +77,10 @@ public class AutoConfigurationSecurity {
     return new AccessTokenAuthenticateFilter();
   }
 
-//  @Bean
-//  public AnnotationFilter annotationFilter() {
-//    return new AnnotationFilter(handlerMapping);
-//  }
 
+  /**
+   * 本地用户
+   */
   @Bean
   @ConditionalOnProperty(prefix = "security.local", name = "enable", havingValue = "true")
   public PropertiesTokenAuthenticateProvider propertiesTokenAuthenticateProvider(SecurityProperties securityProperties) {
@@ -117,11 +116,9 @@ public class AutoConfigurationSecurity {
       top.mrys.custom.FilterChain filterChain = new top.mrys.custom.FilterChain(filters);
 
       MvcRequest mvcRequest = new MvcRequest((HttpServletRequest) request);
-
       MvcResponse mvcResponse = new MvcResponse((HttpServletResponse) response);
 
       SpringInstanceProvider instanceProvider = new SpringInstanceProvider(applicationContext);
-
       ServerExchange exchange = new MvcServerExchange(mvcRequest, mvcResponse, securityContext, instanceProvider);
       filterChain.doFilter(exchange);
     }
@@ -135,6 +132,9 @@ public class AutoConfigurationSecurity {
       registry.addInterceptor(new HandlerInterceptor() {
         @Override
         public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+          if (AuthTool.isSuperAdmin()){
+            return true;
+          }
           if (handler instanceof HandlerMethod handlerMethod) {
             StandardEvaluationContext context = new StandardEvaluationContext();
             context.setBeanResolver(new BeanFactoryResolver(applicationContext));
