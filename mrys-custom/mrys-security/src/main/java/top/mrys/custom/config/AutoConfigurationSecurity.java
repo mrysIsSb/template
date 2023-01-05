@@ -11,7 +11,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
@@ -24,6 +23,7 @@ import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.common.TemplateParserContext;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.server.ServerWebExchange;
@@ -44,7 +44,6 @@ import top.mrys.custom.core.*;
 import top.mrys.custom.exceptions.AuthenticationException;
 import top.mrys.custom.exceptions.NoLoginException;
 import top.mrys.custom.filters.*;
-import top.mrys.custom.filters.authenticate.PropertiesTokenAuthenticateProvider;
 import top.mrys.custom.login.functions.LoginFunctionRedirect;
 import top.mrys.custom.login.functions.LoginFunctionResult;
 import top.mrys.custom.mvc.HandlerFunctionRequest;
@@ -56,8 +55,9 @@ import java.io.IOException;
 import java.lang.reflect.AnnotatedElement;
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
-import static org.springframework.web.servlet.function.RequestPredicates.GET;
+import static org.springframework.web.servlet.function.RequestPredicates.POST;
 
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnWebApplication
@@ -95,11 +95,7 @@ public class AutoConfigurationSecurity {
   /**
    * 本地用户
    */
-  @Bean
-  @ConditionalOnProperty(prefix = "security.local", name = "enable", havingValue = "true")
-  public PropertiesTokenAuthenticateProvider propertiesTokenAuthenticateProvider(SecurityProperties securityProperties) {
-    return new PropertiesTokenAuthenticateProvider(securityProperties.getLocal().getUsers());
-  }
+
 
   /**
    * spring mvc 配置
@@ -119,7 +115,7 @@ public class AutoConfigurationSecurity {
     private ApplicationContext applicationContext;
 
     @Autowired
-    private List<LoginFunction> loginFunctions;
+    private Optional<List<LoginFunction>> loginFunctionsOptional;
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, jakarta.servlet.FilterChain chain) throws IOException, ServletException {
@@ -188,9 +184,14 @@ public class AutoConfigurationSecurity {
      */
     @Bean
     public RouterFunction<ServerResponse> loginRouterFunction() {
-      return RouterFunctions.route(GET("/auth/login/{type}"), request -> {
+      return RouterFunctions.route(POST("/auth/login/{type}"), request -> {
         String type = request.pathVariable("type");
         HandlerFunctionRequest functionRequest = new HandlerFunctionRequest(request);
+        if (loginFunctionsOptional.isEmpty()) {
+          //没有登录函数
+            return ServerResponse.status(HttpStatus.NOT_FOUND).build();
+        }
+        List<LoginFunction> loginFunctions = loginFunctionsOptional.get();
         if (CollUtil.isEmpty(loginFunctions)){
           throw new RuntimeException("没有登录实现");
         }
@@ -207,7 +208,7 @@ public class AutoConfigurationSecurity {
           //返回json
           if (loginFunction instanceof LoginFunctionResult result) {
             return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
-                    .body(result.getResult(authentication));
+                    .body(JSONUtil.toJsonStr(result.getResult(authentication)));
           }
           //重定向
           if (loginFunction instanceof LoginFunctionRedirect redirect) {

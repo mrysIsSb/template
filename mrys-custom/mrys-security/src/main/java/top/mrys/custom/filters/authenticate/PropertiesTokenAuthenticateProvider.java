@@ -1,8 +1,7 @@
 package top.mrys.custom.filters.authenticate;
 
-import top.mrys.custom.core.Authentication;
-import top.mrys.custom.core.BaseUserInfo;
 import top.mrys.custom.config.SecurityProperties;
+import top.mrys.custom.core.Authentication;
 import top.mrys.custom.filters.AccessTokenAuthenticateProvider;
 import top.mrys.custom.filters.AccessTokenAuthentication;
 
@@ -29,13 +28,7 @@ public class PropertiesTokenAuthenticateProvider implements AccessTokenAuthentic
       .findFirst()
       .ifPresent(user -> {
         authentication.setAuthenticated(true);
-        BaseUserInfo info = new BaseUserInfo();
-        info.setUserId(user.getUserId());
-        info.setUserName(user.getUserName());
-        info.setSuperAdmin(user.isSuperAdmin());
-        info.setRoles(user.getRoles());
-        info.setPermissions(user.getPermissions());
-        authentication.setUserInfo(info);
+        authentication.setUserInfo(user.toUserInfo());
       });
     return authentication;
   }

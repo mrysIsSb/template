@@ -2,6 +2,8 @@ package top.mrys.custom.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import top.mrys.custom.core.BaseUserInfo;
+import top.mrys.custom.core.UserInfo;
 
 import java.util.List;
 
@@ -30,10 +32,22 @@ public class SecurityProperties {
 
     private String userName;
 
+    private String password;
+
     private boolean superAdmin;
 
     private List<String> roles;
 
     private List<String> permissions;
+
+    public UserInfo toUserInfo(){
+      BaseUserInfo info = new BaseUserInfo();
+      info.setUserId(this.getUserId());
+      info.setUserName(this.getUserName());
+      info.setSuperAdmin(this.isSuperAdmin());
+      info.setRoles(this.getRoles());
+      info.setPermissions(this.getPermissions());
+      return info;
+    }
   }
 }

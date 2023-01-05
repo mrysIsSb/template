@@ -1,5 +1,7 @@
 package top.mrys;
 
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -88,8 +90,13 @@ public class TestMvc {
 
   @Test
   public void login() throws Exception {
+    JSONObject body = JSONUtil.createObj()
+            .set("username", "伊杰")
+            .set("password", "123456");
     MockHttpServletRequestBuilder param = MockMvcRequestBuilders
-            .get("/auth/login/{type}", "local")
+            .post("/auth/login/{type}", "local")
+            .contentType("application/json")
+            .content(body.toString())
             .accept("application/json");
 
     mockMvc.perform(param)
