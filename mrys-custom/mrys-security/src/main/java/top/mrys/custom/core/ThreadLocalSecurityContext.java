@@ -1,8 +1,5 @@
-package top.mrys.custom.filters;
+package top.mrys.custom.core;
 
-
-import top.mrys.custom.core.Authentication;
-import top.mrys.custom.core.SecurityContext;
 
 /**
  * @see org.springframework.security.core.context.ThreadLocalSecurityContextHolderStrategy
