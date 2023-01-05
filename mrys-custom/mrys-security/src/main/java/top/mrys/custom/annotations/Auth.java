@@ -16,7 +16,7 @@ public @interface Auth {
    * #{@beanName.methodName(#args)}
    * @beanName 为spring容器中的bean
    * #alias 为注解别名
-   * T(top.mrys.custom.AuthTool).hasRole(#alias.value) 为AuthTool类中的hasRole方法
+   * T(top.mrys.custom.core.AuthTool).hasRole(#alias.value) 为AuthTool类中的hasRole方法
    */
   String value();
 

@@ -1,8 +1,8 @@
 package top.mrys.custom.filters.authenticate;
 
-import top.mrys.custom.Authentication;
-import top.mrys.custom.BaseUserInfo;
-import top.mrys.custom.SecurityProperties;
+import top.mrys.custom.core.Authentication;
+import top.mrys.custom.core.BaseUserInfo;
+import top.mrys.custom.config.SecurityProperties;
 import top.mrys.custom.filters.AccessTokenAuthenticateProvider;
 import top.mrys.custom.filters.AccessTokenAuthentication;
 

@@ -1,5 +1,6 @@
-package top.mrys.custom;
+package top.mrys.custom.config;
 
+import cn.hutool.json.JSONUtil;
 import jakarta.servlet.Filter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
@@ -16,7 +17,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.expression.BeanFactoryResolver;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.expression.ExpressionParser;
@@ -31,11 +31,15 @@ import org.springframework.web.server.WebFilterChain;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.function.RouterFunction;
+import org.springframework.web.servlet.function.RouterFunctions;
+import org.springframework.web.servlet.function.ServerResponse;
 import reactor.core.publisher.Mono;
 import top.mrys.core.Result;
 import top.mrys.custom.annotations.Anno;
 import top.mrys.custom.annotations.Auth;
 import top.mrys.custom.annotations.AuthAlias;
+import top.mrys.custom.core.*;
 import top.mrys.custom.exceptions.AuthenticationException;
 import top.mrys.custom.exceptions.NoLoginException;
 import top.mrys.custom.filters.*;
@@ -47,6 +51,8 @@ import top.mrys.custom.mvc.MvcServerExchange;
 import java.io.IOException;
 import java.lang.reflect.AnnotatedElement;
 import java.util.List;
+
+import static org.springframework.web.servlet.function.RequestPredicates.GET;
 
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnWebApplication
@@ -90,6 +96,9 @@ public class AutoConfigurationSecurity {
     return new PropertiesTokenAuthenticateProvider(securityProperties.getLocal().getUsers());
   }
 
+  /**
+   * spring mvc 配置
+   */
   @Configuration(proxyBeanMethods = false)
   @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
   public static class WebMvcConfig implements Filter, WebMvcConfigurer {
@@ -116,7 +125,7 @@ public class AutoConfigurationSecurity {
           throw new RuntimeException(e);
         }
       });
-      top.mrys.custom.FilterChain filterChain = new top.mrys.custom.FilterChain(filters);
+      FilterChain filterChain = new FilterChain(filters);
 
       MvcRequest mvcRequest = new MvcRequest((HttpServletRequest) request);
       MvcResponse mvcResponse = new MvcResponse((HttpServletResponse) response);
@@ -136,6 +145,7 @@ public class AutoConfigurationSecurity {
         @Override
         public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
           if (AuthTool.isSuperAdmin()){
+            //超级管理员 不需要判断权限
             return true;
           }
           if (handler instanceof HandlerMethod handlerMethod) {
@@ -164,21 +174,25 @@ public class AutoConfigurationSecurity {
       });
     }
 
+    /**
+     * 用户登录路由
+     */
     @Bean
-    public org.springframework.web.servlet.function.RouterFunction<org.springframework.web.servlet.function.ServerResponse> loginRouterFunction() {
-      //todo 不通 需要改进
-      return org.springframework.web.servlet.function.RouterFunctions.route(org.springframework.web.servlet.function.RequestPredicates.GET("/auth/login/{type}"), request -> {
-              String type = request.pathVariable("type");
-              return org.springframework.web.servlet.function.ServerResponse.ok()
+    public RouterFunction<ServerResponse> loginRouterFunction() {
+      return RouterFunctions.route(GET("/auth/login/{type}"), request -> {
+        String type = request.pathVariable("type");
+        return ServerResponse.ok()
                       .contentType(MediaType.APPLICATION_JSON)
-                      .body(Result.ok(type), ParameterizedTypeReference.forType(String.class));
+                      .body(JSONUtil.toJsonStr(Result.ok(type)));
             }
       );
     }
 
   }
 
-
+  /**
+   * 验证是否有权限
+   */
   private static boolean checkAuth(AnnotatedElement annotatedElement, StandardEvaluationContext context, ExpressionParser parser, TemplateParserContext templateParserContext) {
     if (!AuthTool.isLogin()) {
       throw NoLoginException.getInstance();
@@ -212,7 +226,7 @@ public class AutoConfigurationSecurity {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
       log.debug("构建flux权限过滤器");
-      top.mrys.custom.FilterChain filterChain = new top.mrys.custom.FilterChain(filters);
+      FilterChain filterChain = new FilterChain(filters);
       chain.filter(exchange);
       return null;
     }

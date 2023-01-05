@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
  */
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-@Auth(value = "#{T(top.mrys.custom.AuthTool).hasRole(#alias.value)}", msg = "#{'非['+#alias.value+']角色'}")
+@Auth(value = "#{T(top.mrys.custom.core.AuthTool).hasRole(#alias.value)}", msg = "#{'非['+#alias.value+']角色'}")
 @AuthAlias(HasRole.class)
 public @interface HasRole {
   String value();

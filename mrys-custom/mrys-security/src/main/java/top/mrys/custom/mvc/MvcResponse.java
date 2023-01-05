@@ -1,6 +1,6 @@
 package top.mrys.custom.mvc;
 
-import top.mrys.custom.Response;
+import top.mrys.custom.core.Response;
 
 import jakarta.servlet.http.HttpServletResponse;
 

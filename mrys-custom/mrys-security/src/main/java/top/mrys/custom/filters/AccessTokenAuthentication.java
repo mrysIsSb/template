@@ -1,8 +1,8 @@
 package top.mrys.custom.filters;
 
 import lombok.Setter;
-import top.mrys.custom.Authentication;
-import top.mrys.custom.UserInfo;
+import top.mrys.custom.core.Authentication;
+import top.mrys.custom.core.UserInfo;
 
 public class AccessTokenAuthentication implements Authentication {
 

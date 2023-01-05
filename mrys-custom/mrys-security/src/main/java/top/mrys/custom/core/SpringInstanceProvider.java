@@ -1,6 +1,7 @@
-package top.mrys.custom;
+package top.mrys.custom.core;
 
 import org.springframework.context.ApplicationContext;
+import top.mrys.custom.core.InstanceProvider;
 
 import java.util.List;
 import java.util.stream.Collectors;

@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
  */
 @Target({java.lang.annotation.ElementType.METHOD, java.lang.annotation.ElementType.TYPE})
 @java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME)
-@Auth(value = "#{T(top.mrys.custom.AuthTool).hasPermission(#alias.value)}", msg = "#{'没有['+ T(cn.hutool.core.util.StrUtil).blankToDefault(#alias.desc,#alias.value) +']权限'}")
+@Auth(value = "#{T(top.mrys.custom.core.AuthTool).hasPermission(#alias.value)}", msg = "#{'没有['+ T(cn.hutool.core.util.StrUtil).blankToDefault(#alias.desc,#alias.value) +']权限'}")
 @AuthAlias(HasPermission.class)
 public @interface HasPermission {
     /**

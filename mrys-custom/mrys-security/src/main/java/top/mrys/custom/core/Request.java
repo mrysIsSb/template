@@ -1,4 +1,4 @@
-package top.mrys.custom;
+package top.mrys.custom.core;
 
 import org.springframework.http.HttpMethod;
 

@@ -1,8 +1,10 @@
-package top.mrys.custom;
+package top.mrys.custom.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplicationRunListener;
 import org.springframework.context.ConfigurableApplicationContext;
+import top.mrys.custom.core.SecurityContext;
+import top.mrys.custom.core.SecurityContextHolder;
 
 import java.time.Duration;
 

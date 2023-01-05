@@ -2,7 +2,7 @@ package top.mrys.custom.mvc;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpMethod;
-import top.mrys.custom.Request;
+import top.mrys.custom.core.Request;
 
 public class MvcRequest implements Request {
 

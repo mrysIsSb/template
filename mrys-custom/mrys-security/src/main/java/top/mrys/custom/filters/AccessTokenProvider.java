@@ -1,6 +1,6 @@
 package top.mrys.custom.filters;
 
-import top.mrys.custom.ServerExchange;
+import top.mrys.custom.core.ServerExchange;
 
 public interface AccessTokenProvider {
 

@@ -1,8 +1,8 @@
 package top.mrys.custom.mvc;
 
-import top.mrys.custom.InstanceProvider;
-import top.mrys.custom.SecurityContext;
-import top.mrys.custom.ServerExchange;
+import top.mrys.custom.core.InstanceProvider;
+import top.mrys.custom.core.SecurityContext;
+import top.mrys.custom.core.ServerExchange;
 
 import java.util.HashMap;
 import java.util.Map;

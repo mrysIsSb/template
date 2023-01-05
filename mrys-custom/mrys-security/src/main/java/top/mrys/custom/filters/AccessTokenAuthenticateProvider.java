@@ -1,6 +1,6 @@
 package top.mrys.custom.filters;
 
-import top.mrys.custom.Authentication;
+import top.mrys.custom.core.Authentication;
 
 /**
  * access token 认证提供者
