@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpMethod;
 import top.mrys.custom.core.Request;
 
-public class MvcRequest implements Request {
+public class MvcRequest implements Request<HttpServletRequest> {
 
   private final HttpServletRequest request;
 
@@ -27,7 +27,15 @@ public class MvcRequest implements Request {
     return request.getHeader(name);
   }
 
-  public HttpServletRequest getHttpServletRequest() {
+  @Override
+  public String getParam(String name) {
+    return request.getParameter(name);
+  }
+
+
+  @Override
+  public HttpServletRequest getNativeRequest() {
     return request;
   }
+
 }

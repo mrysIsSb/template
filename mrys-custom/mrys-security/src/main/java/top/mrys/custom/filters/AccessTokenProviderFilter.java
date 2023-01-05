@@ -25,7 +25,7 @@ public class AccessTokenProviderFilter implements SecurityFilter, Ordered {
       .stream()
       .map(provider -> provider.getAccessToken(exchange))
       .filter(Objects::nonNull)
-      .findFirst()
+      .findFirst()//获取第一个
       .ifPresent(accessToken -> {
         log.debug("access token:{}", accessToken);
         //如果存在 设置access token

@@ -1,5 +1,6 @@
 package top.mrys.custom.config;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.json.JSONUtil;
 import jakarta.servlet.Filter;
 import jakarta.servlet.ServletException;
@@ -44,12 +45,16 @@ import top.mrys.custom.exceptions.AuthenticationException;
 import top.mrys.custom.exceptions.NoLoginException;
 import top.mrys.custom.filters.*;
 import top.mrys.custom.filters.authenticate.PropertiesTokenAuthenticateProvider;
+import top.mrys.custom.login.functions.LoginFunctionRedirect;
+import top.mrys.custom.login.functions.LoginFunctionResult;
+import top.mrys.custom.mvc.HandlerFunctionRequest;
 import top.mrys.custom.mvc.MvcRequest;
 import top.mrys.custom.mvc.MvcResponse;
 import top.mrys.custom.mvc.MvcServerExchange;
 
 import java.io.IOException;
 import java.lang.reflect.AnnotatedElement;
+import java.net.URI;
 import java.util.List;
 
 import static org.springframework.web.servlet.function.RequestPredicates.GET;
@@ -112,6 +117,9 @@ public class AutoConfigurationSecurity {
 
     @Autowired
     private ApplicationContext applicationContext;
+
+    @Autowired
+    private List<LoginFunction> loginFunctions;
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, jakarta.servlet.FilterChain chain) throws IOException, ServletException {
@@ -176,14 +184,41 @@ public class AutoConfigurationSecurity {
 
     /**
      * 用户登录路由
+     * 登录也可以用过滤器来实现
      */
     @Bean
     public RouterFunction<ServerResponse> loginRouterFunction() {
       return RouterFunctions.route(GET("/auth/login/{type}"), request -> {
         String type = request.pathVariable("type");
+        HandlerFunctionRequest functionRequest = new HandlerFunctionRequest(request);
+        if (CollUtil.isEmpty(loginFunctions)){
+          throw new RuntimeException("没有登录实现");
+        }
+        LoginFunction loginFunction = loginFunctions.stream()
+                .filter(lf -> lf.support(type))
+                .findFirst()//找到第一个
+                .orElseThrow(() -> new RuntimeException(String.format("没有登录实现%s", type)));
+        Authentication authentication = loginFunction.login(functionRequest);
+
+        if (authentication != null && authentication.isAuthenticated()) {
+          //登录成功
+          SecurityContextHolder.getContext().setAuthentication(authentication);
+
+          //返回json
+          if (loginFunction instanceof LoginFunctionResult result) {
+            return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
+                    .body(result.getResult(authentication));
+          }
+          //重定向
+          if (loginFunction instanceof LoginFunctionRedirect redirect) {
+            return ServerResponse.temporaryRedirect(URI.create(redirect.getRedirectUrl(authentication))).build();
+          }
+
+        }
+
         return ServerResponse.ok()
                       .contentType(MediaType.APPLICATION_JSON)
-                      .body(JSONUtil.toJsonStr(Result.ok(type)));
+                      .body(JSONUtil.toJsonStr(Result.error("登录失败")));
             }
       );
     }
