@@ -24,4 +24,8 @@ public interface UserInfo {
     List<String> getRoles();
 
     List<String> getPermissions();
+
+    <T> T getAttr(String name);
+
+
 }
