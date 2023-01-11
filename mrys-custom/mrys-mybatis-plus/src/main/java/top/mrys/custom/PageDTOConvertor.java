@@ -1,5 +1,6 @@
 package top.mrys.custom;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import top.mrys.core.PageParam;
 import top.mrys.core.PageParamConvertor;
@@ -11,7 +12,7 @@ public class PageDTOConvertor implements PageParamConvertor<Page> {
 
   @Override
   public boolean support(Class<?> clazz) {
-    return Page.class.isAssignableFrom(clazz);
+    return IPage.class.isAssignableFrom(clazz);
   }
 
   @Override

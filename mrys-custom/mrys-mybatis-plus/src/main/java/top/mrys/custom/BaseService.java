@@ -1,10 +1,11 @@
 package top.mrys.custom;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import java.io.Serializable;
 import top.mrys.core.PageParam;
 import top.mrys.core.PageResult;
 import top.mrys.core.Result;
+
+import java.io.Serializable;
 
 /**
  * 基础服务
@@ -30,7 +31,7 @@ public interface BaseService<T> {
 
   default <D> PageResult<D> toPageResult(Page<D> page) {
     PageResult<D> result = PageResult.from(
-      Result.ok(page.getRecords()));
+      Result.success(page.getRecords()));
     result.setCurrent(page.getCurrent());
     result.setSize(page.getSize());
     result.setTotal(page.getTotal());

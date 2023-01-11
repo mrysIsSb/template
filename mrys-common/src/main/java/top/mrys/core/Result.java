@@ -12,6 +12,9 @@ public class Result<T> {
   private String msg;
   private T data;
 
+  public static int SUCCESS = 0;
+  public static int FAIL = -1;
+
   // ----------------------base begin----------------------
   public Result() {
   }
@@ -78,8 +81,8 @@ public class Result<T> {
    * @param <O>    转换后的类型
    * @return 转换后的结果
    */
-  public <O> Result<O> mapOK(Function<T, O> mapper) {
-    return map(0, mapper);
+  public <O> Result<O> mapSuccess(Function<T, O> mapper) {
+    return map(SUCCESS, mapper);
   }
 
   /**
@@ -103,7 +106,7 @@ public class Result<T> {
   }
 
   public Result<T> then(Function<T, Result<T>> function) {
-    if (isOk()) {
+    if (isSuccess()) {
       return function.apply(data);
     }
     return this;
@@ -115,14 +118,14 @@ public class Result<T> {
   }
 
   public Result<T> throwIfError(String msg) throws ResultException {
-    if (!isOk()) {
+    if (!isSuccess()) {
       throw new ResultException(code, msg);
     }
     return this;
   }
 
-  public Boolean isOk() {
-    return code == 0;
+  public Boolean isSuccess() {
+    return code == SUCCESS;
   }
 
   // ----------------------method end------------------------
@@ -137,30 +140,30 @@ public class Result<T> {
     return new Result<>(code, msg, data);
   }
 
-  public static <T> Result<T> ok() {
-    return ok(null);
+  public static <T> Result<T> success() {
+    return success(null);
   }
 
-  public static <T> Result<T> ok(T data) {
+  public static <T> Result<T> success(T data) {
     return newInstance(0, "ok", data);
   }
 
-  public static <T> Result<T> error() {
-    return error(null);
+  public static <T> Result<T> fail() {
+    return fail(null);
   }
 
-  public static <T> Result<T> error(String msg) {
-    return newInstance(-1, msg, null);
+  public static <T> Result<T> fail(String msg) {
+    return newInstance(FAIL, msg, null);
   }
 
-  public static <T> Result<T> error(int code, String msg) {
+  public static <T> Result<T> fail(int code, String msg) {
     return newInstance(code, msg, null);
   }
   public static <T> Result<T> assert0(boolean b, String msg, T data) {
     if (b) {
-      return ok(data);
+      return success(data);
     }
-    return error(msg);
+    return fail(msg);
   }
   // ----------------------static method end----------------------
 }

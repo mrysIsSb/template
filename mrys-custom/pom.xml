@@ -14,9 +14,10 @@
     <module>mrys-rabbitmq</module>
     <module>mrys-mq</module>
       <module>mrys-web</module>
-      <module>mrys-es</module>
+<!--      <module>mrys-es</module>-->
       <module>mrys-security</module>
       <module>mrys-log</module>
+    <module>mrys-api-doc</module>
   </modules>
 
   <name>mrys-custom</name>
@@ -31,8 +32,8 @@
     <mybatis-plus.version>3.5.3</mybatis-plus.version>
     <mrys-common.version>1.0-SNAPSHOT</mrys-common.version>
 <!--    <spring-boot.version>2.3.12.RELEASE</spring-boot.version>-->
-    <spring-boot.version>3.0.0</spring-boot.version>
-    <hutool.version>5.8.3</hutool.version>
+    <spring-boot.version>3.0.1</spring-boot.version>
+    <hutool.version>5.8.11</hutool.version>
   </properties>
 
   <dependencyManagement>

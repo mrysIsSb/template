@@ -49,6 +49,6 @@ public class LocalLoginFunction implements LoginFunction, LoginFunctionResult<Ac
 
     @Override
     public Result<?> getResult(AccessTokenAuthentication authentication) {
-        return Result.ok(authentication.getAccessToken());
+        return Result.success(authentication.getAccessToken());
     }
 }

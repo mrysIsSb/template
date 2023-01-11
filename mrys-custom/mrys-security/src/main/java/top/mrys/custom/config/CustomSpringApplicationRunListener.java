@@ -17,7 +17,7 @@ public class CustomSpringApplicationRunListener implements SpringApplicationRunL
 
   @Override
   public void started(ConfigurableApplicationContext context, Duration timeTaken) {
-    log.debug("spring boot started");
+    log.info("spring boot started set security context");
     SecurityContextHolder.setContext(context.getBean(SecurityContext.class));
   }
 

@@ -1,0 +1,22 @@
+server:
+  port: 8080
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://192.168.8.15:3306/mrys_test?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: qstsc
+    password: QSTsc2019@)!(
+  devtools:
+    restart:
+      enabled: true
+    livereload:
+      enabled: true
+mybatis-plus:
+  global-config:
+    enable-sql-runner: false
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+logging:
+  level:
+    root: info
+version: 1.0.0

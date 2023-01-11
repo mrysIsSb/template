@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -65,6 +66,10 @@ import static org.springframework.web.servlet.function.RequestPredicates.POST;
 @Slf4j
 public class AutoConfigurationSecurity {
 
+  public AutoConfigurationSecurity() {
+    log.info("init AutoConfigurationSecurity");
+  }
+
   @Bean
   public SecurityContext securityContext() {
     return new ThreadLocalSecurityContext();
@@ -102,6 +107,7 @@ public class AutoConfigurationSecurity {
    */
   @Configuration(proxyBeanMethods = false)
   @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
+  @AutoConfigureAfter(AutoConfigurationSecurity.class)
   public static class WebMvcConfig implements Filter, WebMvcConfigurer {
 
 
@@ -122,7 +128,7 @@ public class AutoConfigurationSecurity {
       log.debug("构建权限过滤器");
       filters.add((exchange, chain1) -> {
         try {
-          chain.doFilter(request, response);
+          chain.doFilter((ServletRequest)exchange.getRequest().getNativeRequest(), (ServletResponse)exchange.getResponse().getNativeResponse());
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
@@ -219,7 +225,7 @@ public class AutoConfigurationSecurity {
 
         return ServerResponse.ok()
                       .contentType(MediaType.APPLICATION_JSON)
-                      .body(JSONUtil.toJsonStr(Result.error("登录失败")));
+                      .body(JSONUtil.toJsonStr(Result.fail("登录失败")));
             }
       );
     }

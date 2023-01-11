@@ -1,13 +1,9 @@
 package top.mrys.custom;
 
 import cn.hutool.core.util.StrUtil;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import javax.validation.ValidationException;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +12,11 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import top.mrys.core.Result;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author mrys
@@ -39,7 +40,7 @@ public class ValidAutoConfiguration {
       String msg = constraintViolations.stream()
         .map(ConstraintViolation::getMessage)
         .collect(Collectors.joining("|"));
-      return Result.error(msg);
+      return Result.fail(msg);
     }
 
     @ExceptionHandler(BindException.class)
@@ -51,13 +52,13 @@ public class ValidAutoConfiguration {
           map.put("name", fieldError.getField());
           return StrUtil.format(fieldError.getDefaultMessage(), map);
         }).collect(Collectors.joining("|"));
-      return Result.error(msg);
+      return Result.fail(msg);
     }
 
     @ExceptionHandler(ValidationException.class)
     public Result<?> validationException(ValidationException e) {
       log.error(e.getMessage(), e);
-      return Result.error(e.getMessage());
+      return Result.fail(e.getMessage());
     }
 
   }

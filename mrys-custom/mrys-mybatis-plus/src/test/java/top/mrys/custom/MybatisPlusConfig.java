@@ -6,12 +6,8 @@ import com.baomidou.mybatisplus.core.handlers.PostInitTableInfoHandler;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.handler.TenantLineHandler;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.inner.TenantLineInnerInterceptor;
 import lombok.extern.slf4j.Slf4j;
-import net.sf.jsqlparser.expression.Expression;
-import net.sf.jsqlparser.expression.StringValue;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -45,17 +41,17 @@ public class MybatisPlusConfig {
     public MybatisPlusInterceptor mybatisPlusInterceptor() {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
         interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
-        interceptor.addInnerInterceptor(new TenantLineInnerInterceptor(new TenantLineHandler() {
-            @Override
-            public Expression getTenantId() {
-                return new StringValue("b94a46479df74ae3a9e61aa909a1fc37");
-            }
-
-            @Override
-            public String getTenantIdColumn() {
-                return "customerUuid";
-            }
-        }));
+//        interceptor.addInnerInterceptor(new TenantLineInnerInterceptor(new TenantLineHandler() {
+//            @Override
+//            public Expression getTenantId() {
+//                return new StringValue("b94a46479df74ae3a9e61aa909a1fc37");
+//            }
+//
+//            @Override
+//            public String getTenantIdColumn() {
+//                return "customerUuid";
+//            }
+//        }));
         return interceptor;
     }
 

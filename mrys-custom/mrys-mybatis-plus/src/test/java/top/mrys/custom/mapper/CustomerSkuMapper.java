@@ -7,4 +7,5 @@ import top.mrys.custom.emtitys.CustomerSku;
  * @author mrys
  */
 public interface CustomerSkuMapper extends BaseMapper<CustomerSku> {
+
 }

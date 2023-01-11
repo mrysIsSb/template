@@ -18,4 +18,7 @@ public class CustomerSku extends Model<CustomerSku> {
 
     @TableField("goodsName")
     private String goodsName;
+
+    @TableField("delFlag")
+    private EnumDelFlag delFlag;
 }
