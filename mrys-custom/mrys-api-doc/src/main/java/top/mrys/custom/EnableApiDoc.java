@@ -10,6 +10,6 @@ import java.lang.annotation.Target;
  */
 @Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 @Target({java.lang.annotation.ElementType.TYPE})
-@Import({WebMvcRequestHandlerProvider.class})
+@Import({ApiDocAutoConfiguration.class})
 public @interface EnableApiDoc {
 }

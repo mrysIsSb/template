@@ -4,18 +4,22 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import top.mrys.core.Result;
 import top.mrys.custom.annotations.Anno;
+import top.mrys.example.domain.SysUser;
+
+import java.util.List;
 
 /**
  * @author mrys
  */
 @Anno
 @RestController
+@Tag(name = "index", description = "index")
 public class IndexController {
 
   @Value("${version:1.0}")
@@ -35,6 +39,26 @@ public class IndexController {
       return Result.success(info);
     }
     return Result.success(info.get(name));
+  }
+
+  @PostMapping("/user/{uid}")
+  @Operation(summary = "获取用户信息")
+  public Result<SysUser> user(@RequestParam(required = false) @Parameter(description = "姓名") String name,
+                              @PathVariable @Parameter(description = "用户id") String uid,
+                              @RequestBody SysUser user) {
+    return Result.success(new SysUser());
+  }
+
+  @PostMapping("/user1")
+  @Operation(summary = "获取用户信息")
+  public Result<SysUser> user1(@RequestBody List<SysUser> user) {
+    return Result.success(new SysUser());
+  }
+
+  @PostMapping("/user2")
+  @Operation(summary = "获取用户信息")
+  public Result<SysUser> user2(@RequestBody SysUser[] user) {
+    return Result.success(new SysUser());
   }
 
 }
