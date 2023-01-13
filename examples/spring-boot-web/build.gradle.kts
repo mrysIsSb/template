@@ -2,7 +2,7 @@ plugins {
 	java
 	id("org.springframework.boot") version "3.0.1"
 	id("io.spring.dependency-management") version "1.1.0"
-	id("org.graalvm.buildtools.native") version "0.9.18"
+//	id("org.graalvm.buildtools.native") version "0.9.18"
 }
 
 group = "top.mrys.example"
