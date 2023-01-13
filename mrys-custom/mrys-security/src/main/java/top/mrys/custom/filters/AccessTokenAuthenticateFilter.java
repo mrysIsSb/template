@@ -27,13 +27,13 @@ public class AccessTokenAuthenticateFilter implements SecurityFilter, Ordered {
           .map(provider -> provider.authenticate(authentication))
           .filter(auth -> auth != null && auth.isAuthenticated())//
           .findFirst()
-          .orElseThrow(() -> new InvalidTokenException()));//如果没有认证成功 抛出异常
+          .orElseThrow(InvalidTokenException::new));//如果没有认证成功 抛出异常
       chain.doFilter(exchange);
     }
   }
 
   @Override
   public int getOrder() {
-    return 200;
+    return OrderConstants.ORDER_ACCESS_TOKEN_AUTHENTICATE;
   }
 }

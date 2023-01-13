@@ -66,10 +66,6 @@ import static org.springframework.web.servlet.function.RequestPredicates.POST;
 @Slf4j
 public class AutoConfigurationSecurity {
 
-  public AutoConfigurationSecurity() {
-    log.info("init AutoConfigurationSecurity");
-  }
-
   @Bean
   public SecurityContext securityContext() {
     return new ThreadLocalSecurityContext();
@@ -96,6 +92,10 @@ public class AutoConfigurationSecurity {
     return new AccessTokenAuthenticateFilter();
   }
 
+  @Bean
+  public RuleFilter ruleFilter() {
+    return new RuleFilter();
+  }
 
   /**
    * 本地用户

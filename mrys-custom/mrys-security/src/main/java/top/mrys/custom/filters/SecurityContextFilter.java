@@ -6,6 +6,8 @@ import top.mrys.custom.core.FilterChain;
 import top.mrys.custom.core.SecurityFilter;
 import top.mrys.custom.core.ServerExchange;
 
+import static top.mrys.custom.filters.OrderConstants.ORDER_SECURITY_CONTEXT;
+
 @Slf4j
 public class SecurityContextFilter implements SecurityFilter, Ordered {
   @Override
@@ -21,6 +23,6 @@ public class SecurityContextFilter implements SecurityFilter, Ordered {
 
   @Override
   public int getOrder() {
-    return 0;
+    return ORDER_SECURITY_CONTEXT;
   }
 }

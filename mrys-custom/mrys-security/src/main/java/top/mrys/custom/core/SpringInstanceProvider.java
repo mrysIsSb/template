@@ -1,10 +1,9 @@
 package top.mrys.custom.core;
 
 import org.springframework.context.ApplicationContext;
-import top.mrys.custom.core.InstanceProvider;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * spring bean 实例提供者
@@ -25,6 +24,6 @@ public class SpringInstanceProvider implements InstanceProvider {
 
   @Override
   public <T> List<T> getInstances(Class<T> clazz) {
-    return applicationContext.getBeansOfType(clazz).values().stream().collect(Collectors.toList());
+    return new ArrayList<>(applicationContext.getBeansOfType(clazz).values());
   }
 }

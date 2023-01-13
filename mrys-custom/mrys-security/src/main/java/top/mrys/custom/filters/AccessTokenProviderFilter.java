@@ -8,6 +8,8 @@ import top.mrys.custom.core.ServerExchange;
 
 import java.util.Objects;
 
+import static top.mrys.custom.filters.OrderConstants.ORDER_ACCESS_TOKEN_PROVIDER;
+
 /**
  * access token filter
  * 获取access token
@@ -36,6 +38,6 @@ public class AccessTokenProviderFilter implements SecurityFilter, Ordered {
 
   @Override
   public int getOrder() {
-    return 100;
+    return ORDER_ACCESS_TOKEN_PROVIDER;
   }
 }
