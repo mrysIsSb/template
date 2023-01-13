@@ -8,11 +8,13 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import top.mrys.core.Result;
 import top.mrys.custom.annotations.Anno;
 import top.mrys.example.domain.SysUser;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author mrys
@@ -57,8 +59,14 @@ public class IndexController {
 
   @PostMapping("/user2")
   @Operation(summary = "获取用户信息")
-  public Result<SysUser> user2(@RequestBody SysUser[] user) {
-    return Result.success(new SysUser());
+  public Result<List<SysUser>> user2(@RequestBody SysUser[] user) {
+    return Result.success();
+  }
+
+  @PostMapping("/file")
+  @Operation(summary = "上传文件")
+  public Result<Map<String,List<SysUser>>> file(@RequestPart("file") MultipartFile file) {
+    return Result.success();
   }
 
 }

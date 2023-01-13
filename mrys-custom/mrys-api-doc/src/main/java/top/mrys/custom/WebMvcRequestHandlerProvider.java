@@ -5,16 +5,22 @@ package top.mrys.custom;
  */
 
 
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.ClassUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.Paths;
+import io.swagger.v3.oas.models.media.FileSchema;
+import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.parameters.HeaderParameter;
 import io.swagger.v3.oas.models.parameters.PathParameter;
 import io.swagger.v3.oas.models.parameters.QueryParameter;
+import io.swagger.v3.oas.models.responses.ApiResponse;
+import io.swagger.v3.oas.models.responses.ApiResponses;
 import jakarta.servlet.ServletContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +30,7 @@ import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMapping;
 import top.mrys.custom.customizers.ApiPathsCustomizer;
 import top.mrys.custom.customizers.ApiSchemaCustomizer;
@@ -99,15 +106,15 @@ public class WebMvcRequestHandlerProvider implements ApiPathsCustomizer, ApiSche
         Arrays.stream(handlerMethod.getMethod().getParameters()).forEach(param -> {
           //请求体
           if (AnnotatedElementUtils.hasAnnotation(param, RequestBody.class)) {
-              String desc = Optional.ofNullable(param.getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class))
-                .map(io.swagger.v3.oas.annotations.media.Schema::description)
-                .or(() -> Optional.ofNullable(param.getAnnotation(io.swagger.v3.oas.annotations.Parameter.class))
-                  .map(io.swagger.v3.oas.annotations.Parameter::description))
-                .orElse("");
-              operation.requestBody(new io.swagger.v3.oas.models.parameters.RequestBody()
-                .content(new io.swagger.v3.oas.models.media.Content()
-                  .addMediaType("application/json", new io.swagger.v3.oas.models.media.MediaType()
-                    .schema(schemaTypeHandler.handle(new SchemaMetadata(ObjectUtil.defaultIfNull(param.getParameterizedType(), param.getType()), param.getName(), desc, this.schemas))))));
+            String desc = Optional.ofNullable(param.getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class))
+              .map(io.swagger.v3.oas.annotations.media.Schema::description)
+              .or(() -> Optional.ofNullable(param.getAnnotation(io.swagger.v3.oas.annotations.Parameter.class))
+                .map(io.swagger.v3.oas.annotations.Parameter::description))
+              .orElse("");
+            operation.requestBody(new io.swagger.v3.oas.models.parameters.RequestBody()
+              .content(new io.swagger.v3.oas.models.media.Content()
+                .addMediaType("application/json", new io.swagger.v3.oas.models.media.MediaType()
+                  .schema(schemaTypeHandler.handle(new SchemaMetadata(ObjectUtil.defaultIfNull(param.getParameterizedType(), param.getType()), param.getName(), desc, this.schemas))))));
 
           }
           //请求地址参数
@@ -138,14 +145,49 @@ public class WebMvcRequestHandlerProvider implements ApiPathsCustomizer, ApiSche
             operation.addParametersItem(parameter);
           }
           //文件
-          else if (AnnotatedElementUtils.hasAnnotation(param, RequestPart.class)) {
+          else if (AnnotatedElementUtils.hasAnnotation(param, RequestPart.class) && param.getType().equals(MultipartFile.class)) {
             RequestPart requestPart = param.getAnnotation(RequestPart.class);
             io.swagger.v3.oas.models.parameters.RequestBody body = new io.swagger.v3.oas.models.parameters.RequestBody();
-            body.content(new io.swagger.v3.oas.models.media.Content().addMediaType("multipart/form-data", new io.swagger.v3.oas.models.media.MediaType()));
+            Map<String, Schema> p = new HashMap<>() {{
+              put(StrUtil.blankToDefault(requestPart.name(), param.getName()), new FileSchema());
+            }};
+            body.content(new io.swagger.v3.oas.models.media.Content()
+              .addMediaType("multipart/form-data", new io.swagger.v3.oas.models.media.MediaType()
+                .schema(new ObjectSchema().properties(p))));
             operation.requestBody(body);
+          } else {
+            if (ClassUtil.isBasicType(param.getType())) {
+              QueryParameter parameter = new QueryParameter();
+              parameter.required(true);
+              parameter.setName(param.getName());
+              putParamDescription(param, parameter);
+              operation.addParametersItem(parameter);
+            } else if (param.getType().isArray()
+              || Collection.class.isAssignableFrom(param.getType())
+              || BeanUtil.isBean(param.getType())) {
+              QueryParameter parameter = new QueryParameter();
+              parameter.required(true);
+              parameter.setName(param.getName());
+              parameter.schema(schemaTypeHandler.handle(new SchemaMetadata(ObjectUtil.defaultIfNull(param.getParameterizedType(), param.getType()), param.getName(), "", this.schemas)));
+              putParamDescription(param, parameter);
+              operation.addParametersItem(parameter);
+            } else {
+              QueryParameter parameter = new QueryParameter();
+              parameter.required(true);
+              parameter.setName(param.getName());
+              putParamDescription(param, parameter);
+              operation.addParametersItem(parameter);
+            }
           }
-
         });
+
+        //响应
+        operation.responses(new ApiResponses()
+          .addApiResponse("200", new ApiResponse()
+            .description("成功")
+            .content(new io.swagger.v3.oas.models.media.Content()
+              .addMediaType("application/json", new io.swagger.v3.oas.models.media.MediaType()
+                .schema(schemaTypeHandler.handle(new SchemaMetadata(ObjectUtil.defaultIfNull(handlerMethod.getMethod().getGenericReturnType(), handlerMethod.getMethod().getReturnType()), handlerMethod.getMethod().getName(), "", this.schemas)))))));
         this.paths.addPathItem(path, item);
       });
     });
