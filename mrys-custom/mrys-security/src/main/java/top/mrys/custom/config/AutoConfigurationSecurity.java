@@ -44,6 +44,8 @@ import top.mrys.custom.annotations.AuthAlias;
 import top.mrys.custom.core.*;
 import top.mrys.custom.exceptions.AuthenticationException;
 import top.mrys.custom.exceptions.NoLoginException;
+import top.mrys.custom.exceptions.handlers.DefaultExceptionHandler;
+import top.mrys.custom.exceptions.handlers.ExceptionHandler;
 import top.mrys.custom.filters.*;
 import top.mrys.custom.login.functions.LoginFunctionRedirect;
 import top.mrys.custom.login.functions.LoginFunctionResult;
@@ -97,6 +99,10 @@ public class AutoConfigurationSecurity {
     return new RuleFilter();
   }
 
+  @Bean
+  public ExceptionHandler exceptionHandler() {
+    return new DefaultExceptionHandler();
+  }
   /**
    * 本地用户
    */
@@ -123,16 +129,29 @@ public class AutoConfigurationSecurity {
     @Autowired
     private Optional<List<LoginFunction>> loginFunctionsOptional;
 
+    @Autowired
+    private Optional<List<ExceptionHandler>> exceptionHandlersOptional;
+
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, jakarta.servlet.FilterChain chain) throws IOException, ServletException {
       log.debug("构建权限过滤器");
       filters.add((exchange, chain1) -> {
         try {
-          chain.doFilter((ServletRequest)exchange.getRequest().getNativeRequest(), (ServletResponse)exchange.getResponse().getNativeResponse());
-        } catch (RuntimeException e) {
-            throw e;
-        } catch (Exception e) {
-          throw new RuntimeException(e);
+          chain.doFilter((ServletRequest) exchange.getRequest().getNativeRequest(), (ServletResponse) exchange.getResponse().getNativeResponse());
+        } catch (Throwable e) {
+          exceptionHandlersOptional.ifPresent(exceptionHandlers -> {
+            exceptionHandlers
+              .stream()
+              .filter(exceptionHandler -> exceptionHandler.support(e))
+              .findFirst()
+              .ifPresent(exceptionHandler ->
+                exceptionHandler.handle(exchange, e)
+              );
+          });
+          if (log.isDebugEnabled()) {
+
+          }
+          log.error(e.getMessage(), e);
         }
       });
       FilterChain filterChain = new FilterChain(filters);
@@ -154,7 +173,7 @@ public class AutoConfigurationSecurity {
       registry.addInterceptor(new HandlerInterceptor() {
         @Override
         public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-          if (AuthTool.isSuperAdmin()){
+          if (AuthTool.isSuperAdmin()) {
             //超级管理员 不需要判断权限
             return true;
           }
@@ -191,42 +210,42 @@ public class AutoConfigurationSecurity {
     @Bean
     public RouterFunction<ServerResponse> loginRouterFunction() {
       return RouterFunctions.route(POST("/auth/login/{type}"), request -> {
-        String type = request.pathVariable("type");
-        HandlerFunctionRequest functionRequest = new HandlerFunctionRequest(request);
-        if (loginFunctionsOptional.isEmpty()) {
-          //没有登录函数
+          String type = request.pathVariable("type");
+          HandlerFunctionRequest functionRequest = new HandlerFunctionRequest(request);
+          if (loginFunctionsOptional.isEmpty()) {
+            //没有登录函数
             return ServerResponse.status(HttpStatus.NOT_FOUND).build();
-        }
-        List<LoginFunction> loginFunctions = loginFunctionsOptional.get();
-        if (CollUtil.isEmpty(loginFunctions)){
-          throw new RuntimeException("没有登录实现");
-        }
-        LoginFunction loginFunction = loginFunctions.stream()
-                .filter(lf -> lf.support(type))
-                .findFirst()//找到第一个
-                .orElseThrow(() -> new RuntimeException(String.format("没有登录实现%s", type)));
-        Authentication authentication = loginFunction.login(functionRequest);
-
-        if (authentication != null && authentication.isAuthenticated()) {
-          //登录成功
-          SecurityContextHolder.getContext().setAuthentication(authentication);
-
-          //返回json
-          if (loginFunction instanceof LoginFunctionResult result) {
-            return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
-                    .body(JSONUtil.toJsonStr(result.getResult(authentication)));
           }
-          //重定向
-          if (loginFunction instanceof LoginFunctionRedirect redirect) {
-            return ServerResponse.temporaryRedirect(URI.create(redirect.getRedirectUrl(authentication))).build();
+          List<LoginFunction> loginFunctions = loginFunctionsOptional.get();
+          if (CollUtil.isEmpty(loginFunctions)) {
+            throw new RuntimeException("没有登录实现");
           }
+          LoginFunction loginFunction = loginFunctions.stream()
+            .filter(lf -> lf.support(type))
+            .findFirst()//找到第一个
+            .orElseThrow(() -> new RuntimeException(String.format("没有登录实现%s", type)));
+          Authentication authentication = loginFunction.login(functionRequest);
 
-        }
+          if (authentication != null && authentication.isAuthenticated()) {
+            //登录成功
+            SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        return ServerResponse.ok()
-                      .contentType(MediaType.APPLICATION_JSON)
-                      .body(JSONUtil.toJsonStr(Result.fail("登录失败")));
+            //返回json
+            if (loginFunction instanceof LoginFunctionResult result) {
+              return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
+                .body(JSONUtil.toJsonStr(result.getResult(authentication)));
             }
+            //重定向
+            if (loginFunction instanceof LoginFunctionRedirect redirect) {
+              return ServerResponse.temporaryRedirect(URI.create(redirect.getRedirectUrl(authentication))).build();
+            }
+
+          }
+
+          return ServerResponse.ok()
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(JSONUtil.toJsonStr(Result.fail("登录失败")));
+        }
       );
     }
 
@@ -239,12 +258,12 @@ public class AutoConfigurationSecurity {
     if (!AuthTool.isLogin()) {
       throw NoLoginException.getInstance();
     }
-    Auth auth = AnnotatedElementUtils.findMergedAnnotation(annotatedElement,Auth.class);
+    Auth auth = AnnotatedElementUtils.findMergedAnnotation(annotatedElement, Auth.class);
     if (AnnotationUtils.isSynthesizedAnnotation(auth)) {
-      AuthAlias alias = AnnotatedElementUtils.findMergedAnnotation(annotatedElement,AuthAlias.class);
-      context.setVariable("alias", AnnotatedElementUtils.findMergedAnnotation(annotatedElement,alias.value()));
+      AuthAlias alias = AnnotatedElementUtils.findMergedAnnotation(annotatedElement, AuthAlias.class);
+      context.setVariable("alias", AnnotatedElementUtils.findMergedAnnotation(annotatedElement, alias.value()));
     }
-    if (Boolean.FALSE.equals(parser.parseExpression(auth.value(), templateParserContext).getValue(context, Boolean.class))){
+    if (Boolean.FALSE.equals(parser.parseExpression(auth.value(), templateParserContext).getValue(context, Boolean.class))) {
       throw new AuthenticationException(parser.parseExpression(auth.msg(), templateParserContext).getValue(context, String.class));
     }
     return true;

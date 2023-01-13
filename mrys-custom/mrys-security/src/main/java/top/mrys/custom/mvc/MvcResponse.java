@@ -1,5 +1,7 @@
 package top.mrys.custom.mvc;
 
+import lombok.SneakyThrows;
+import org.springframework.http.HttpStatus;
 import top.mrys.custom.core.Response;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,5 +21,13 @@ public class MvcResponse implements Response<HttpServletResponse> {
   @Override
   public HttpServletResponse getNativeResponse() {
     return response;
+  }
+
+  @SneakyThrows
+  @Override
+  public Response<HttpServletResponse> ret(HttpStatus status, String data) {
+    response.setStatus(status.value());
+    response.getWriter().write(data);
+    return this;
   }
 }

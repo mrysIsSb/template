@@ -1,0 +1,8 @@
+package top.mrys.custom.exceptions;
+
+/**
+ * 规则不通过异常
+ * @author mrys
+ */
+public class RuleNoPassException extends RuntimeException{
+}
