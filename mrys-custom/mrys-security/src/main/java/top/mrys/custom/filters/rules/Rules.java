@@ -27,6 +27,8 @@ public class Rules {
     //通过所有规则
     if (rules.stream().allMatch(rule -> rule.test(exchange))) {
       chain.doFilter(exchange);
+    }else {
+      throw new RuntimeException("not pass rules");
     }
   }
 }
