@@ -5,7 +5,9 @@ import top.mrys.custom.core.FilterChain;
 import top.mrys.custom.core.ServerExchange;
 import top.mrys.custom.exceptions.RuleNoPassException;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -25,10 +27,17 @@ public class Rules {
       chain.doFilter(exchange);
       return;
     }
+
     //通过所有规则
-    if (rules.stream().allMatch(rule -> rule.test(exchange))) {
+    if (rules.stream()
+      .peek(rule -> exchange.getAttrs().remove(Rule.RULE_EXCEPTION_MSG))
+      .allMatch(rule -> rule.test(exchange))) {
       chain.doFilter(exchange);
     } else {
+      Optional.ofNullable(exchange.getAttrs().get(Rule.RULE_EXCEPTION_MSG))
+        .ifPresent(msg -> {
+          throw new RuleNoPassException((String) msg);
+        });
       throw new RuleNoPassException("not pass rules");
     }
   }

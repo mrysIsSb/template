@@ -7,10 +7,10 @@ import top.mrys.custom.core.ServerExchange;
  *
  * @author mrys
  */
-public interface ExceptionHandler<E> {
+public interface ExceptionHandler<E extends Throwable> {
 
 
-  default boolean support(Throwable throwable){
+  default boolean support(Throwable throwable) {
     return true;
   }
 

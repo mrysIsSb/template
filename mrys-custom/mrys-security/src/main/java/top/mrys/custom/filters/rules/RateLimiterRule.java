@@ -28,6 +28,7 @@ public class RateLimiterRule extends AbstractRuleWrapper<RateLimiterRule> implem
     if(rateLimiter.tryAcquire()){
       return super.test(exchange);
     }
+    exchange.getAttrs().put(Rule.RULE_EXCEPTION_MSG,"访问过于频繁");
     return false;
   }
 }

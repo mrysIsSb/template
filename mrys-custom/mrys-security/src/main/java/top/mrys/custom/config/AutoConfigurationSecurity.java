@@ -8,6 +8,7 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -46,6 +47,8 @@ import top.mrys.custom.exceptions.AuthenticationException;
 import top.mrys.custom.exceptions.NoLoginException;
 import top.mrys.custom.exceptions.handlers.DefaultExceptionHandler;
 import top.mrys.custom.exceptions.handlers.ExceptionHandler;
+import top.mrys.custom.exceptions.handlers.ExceptionHandlerRegistry;
+import top.mrys.custom.exceptions.handlers.ServletExceptionHandler;
 import top.mrys.custom.filters.*;
 import top.mrys.custom.login.functions.LoginFunctionRedirect;
 import top.mrys.custom.login.functions.LoginFunctionResult;
@@ -101,12 +104,22 @@ public class AutoConfigurationSecurity {
   }
 
   @Bean
-  public ExceptionHandler exceptionHandler() {
+  public DefaultExceptionHandler exceptionHandler() {
     return new DefaultExceptionHandler();
   }
-  /**
-   * 本地用户
-   */
+
+  @Bean
+  public ServletExceptionHandler servletExceptionHandler() {
+    return new ServletExceptionHandler();
+  }
+
+
+  @Bean
+  public ExceptionHandlerRegistry exceptionHandlerRegistry(Optional<List<ExceptionHandler<Throwable>>> exceptionHandlers) {
+    return exceptionHandlers
+      .map(ExceptionHandlerRegistry::new)
+      .orElseGet(ExceptionHandlerRegistry::new);
+  }
 
 
   /**
@@ -131,9 +144,10 @@ public class AutoConfigurationSecurity {
     private Optional<List<LoginFunction>> loginFunctionsOptional;
 
     @Autowired
-    private Optional<List<ExceptionHandler>> exceptionHandlersOptional;
+    private ExceptionHandlerRegistry exceptionHandlerRegistry;
 
     @Override
+    @SneakyThrows
     public void doFilter(ServletRequest request, ServletResponse response, jakarta.servlet.FilterChain chain) throws IOException, ServletException {
       log.debug("构建权限过滤器");
       ArrayList<SecurityFilter> list = new ArrayList<>(filters);
@@ -141,22 +155,17 @@ public class AutoConfigurationSecurity {
         try {
           chain.doFilter((ServletRequest) exchange.getRequest().getNativeRequest(), (ServletResponse) exchange.getResponse().getNativeResponse());
         } catch (Throwable e) {
-          exceptionHandlersOptional.ifPresent(exceptionHandlers -> {
-            exceptionHandlers
-              .stream()
-              .filter(exceptionHandler -> exceptionHandler.support(e))
-              .findFirst()
-              .ifPresent(exceptionHandler ->
-                exceptionHandler.handle(exchange, e)
-              );
-          });
           if (log.isDebugEnabled()) {
-
+            log.error(e.getMessage(), e);
           }
-          log.error(e.getMessage(), e);
+          throw e;
         }
       });
+      //构建过滤器链
       FilterChain filterChain = new FilterChain(list);
+      //过滤器链异常处理
+      filterChain.setExceptionHandlerRegistry(exceptionHandlerRegistry);
+
 
       MvcRequest mvcRequest = new MvcRequest((HttpServletRequest) request);
       MvcResponse mvcResponse = new MvcResponse((HttpServletResponse) response);

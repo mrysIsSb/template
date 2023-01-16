@@ -17,6 +17,7 @@ public abstract class AbstractRuleWrapper<R extends Rule> implements Rule {
   @Override
   public boolean test(ServerExchange exchange) {
     if (rule != null) {
+      exchange.getAttrs().remove(Rule.RULE_EXCEPTION_MSG);
       return rule.test(exchange);
     }
     return true;
