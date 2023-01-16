@@ -26,6 +26,8 @@ public class MvcResponse implements Response<HttpServletResponse> {
   @SneakyThrows
   @Override
   public Response<HttpServletResponse> ret(HttpStatus status, String data) {
+    response.setCharacterEncoding("UTF-8");
+    response.setContentType("application/json");
     response.setStatus(status.value());
     response.getWriter().write(data);
     return this;

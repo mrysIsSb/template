@@ -5,4 +5,7 @@ package top.mrys.custom.exceptions;
  * @author mrys
  */
 public class RuleNoPassException extends RuntimeException{
+  public RuleNoPassException(String message) {
+    super(message);
+  }
 }

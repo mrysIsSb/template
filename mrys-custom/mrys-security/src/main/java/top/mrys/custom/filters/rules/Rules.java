@@ -3,6 +3,7 @@ package top.mrys.custom.filters.rules;
 import cn.hutool.core.collection.CollUtil;
 import top.mrys.custom.core.FilterChain;
 import top.mrys.custom.core.ServerExchange;
+import top.mrys.custom.exceptions.RuleNoPassException;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -27,8 +28,8 @@ public class Rules {
     //通过所有规则
     if (rules.stream().allMatch(rule -> rule.test(exchange))) {
       chain.doFilter(exchange);
-    }else {
-      throw new RuntimeException("not pass rules");
+    } else {
+      throw new RuleNoPassException("not pass rules");
     }
   }
 }

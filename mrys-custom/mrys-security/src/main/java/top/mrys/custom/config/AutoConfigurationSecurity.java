@@ -57,6 +57,7 @@ import top.mrys.custom.mvc.MvcServerExchange;
 import java.io.IOException;
 import java.lang.reflect.AnnotatedElement;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -135,7 +136,8 @@ public class AutoConfigurationSecurity {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, jakarta.servlet.FilterChain chain) throws IOException, ServletException {
       log.debug("构建权限过滤器");
-      filters.add((exchange, chain1) -> {
+      ArrayList<SecurityFilter> list = new ArrayList<>(filters);
+      list.add((exchange, chain1) -> {
         try {
           chain.doFilter((ServletRequest) exchange.getRequest().getNativeRequest(), (ServletResponse) exchange.getResponse().getNativeResponse());
         } catch (Throwable e) {
@@ -154,7 +156,7 @@ public class AutoConfigurationSecurity {
           log.error(e.getMessage(), e);
         }
       });
-      FilterChain filterChain = new FilterChain(filters);
+      FilterChain filterChain = new FilterChain(list);
 
       MvcRequest mvcRequest = new MvcRequest((HttpServletRequest) request);
       MvcResponse mvcResponse = new MvcResponse((HttpServletResponse) response);

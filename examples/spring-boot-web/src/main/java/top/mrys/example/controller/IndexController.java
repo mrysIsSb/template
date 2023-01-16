@@ -1,5 +1,7 @@
 package top.mrys.example.controller;
 
+import cn.hutool.core.lang.Assert;
+import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
@@ -60,6 +62,7 @@ public class IndexController {
   @PostMapping("/user2")
   @Operation(summary = "获取用户信息")
   public Result<List<SysUser>> user2(@RequestBody SysUser[] user) {
+    Assert.isTrue(ArrayUtil.isNotEmpty(user), "用户不能为空");
     return Result.success();
   }
 
