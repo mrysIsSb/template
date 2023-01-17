@@ -8,18 +8,18 @@ import java.util.Optional;
  */
 public class ExceptionHandlerRegistry {
 
-  private final List<ExceptionHandler<Throwable>> exceptionHandlers;
+  private final List<ExceptionHandler> exceptionHandlers;
 
 
   public ExceptionHandlerRegistry() {
     exceptionHandlers = new java.util.ArrayList<>();
   }
 
-  public ExceptionHandlerRegistry(List<ExceptionHandler<Throwable>> exceptionHandlers) {
+  public ExceptionHandlerRegistry(List<ExceptionHandler> exceptionHandlers) {
     this.exceptionHandlers = exceptionHandlers;
   }
 
-  public Optional<ExceptionHandler<Throwable>> getExceptionHandler(Throwable throwable) {
+  public Optional<ExceptionHandler> getExceptionHandler(Throwable throwable) {
     return exceptionHandlers.stream()
       .filter(handler -> handler.support(throwable))
       .findFirst();

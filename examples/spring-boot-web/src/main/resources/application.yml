@@ -20,3 +20,18 @@ logging:
   level:
     root: info
 version: 1.0.0
+security:
+  local:
+    enable: true
+    users:
+      - token: "test_access_token"
+        user-id: mrys
+        super-admin: true
+        user-name: "伊杰"
+        password: "123456"
+        roles:
+          - "ROLE_USER"
+        #          - "ROLE_ADMIN"
+        permissions:
+          - "user:query"
+#          - "auth:test"

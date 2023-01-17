@@ -115,7 +115,7 @@ public class AutoConfigurationSecurity {
 
 
   @Bean
-  public ExceptionHandlerRegistry exceptionHandlerRegistry(Optional<List<ExceptionHandler<Throwable>>> exceptionHandlers) {
+  public ExceptionHandlerRegistry exceptionHandlerRegistry(Optional<List<ExceptionHandler>> exceptionHandlers) {
     return exceptionHandlers
       .map(ExceptionHandlerRegistry::new)
       .orElseGet(ExceptionHandlerRegistry::new);

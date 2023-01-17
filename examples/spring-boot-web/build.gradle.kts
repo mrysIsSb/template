@@ -39,6 +39,7 @@ dependencies {
 	implementation("top.mrys:mrys-security:1.0-SNAPSHOT")
 	implementation("top.mrys:mrys-mybatis-plus:1.0-SNAPSHOT")
 	implementation("top.mrys:mrys-web:1.0-SNAPSHOT")
+	implementation("top.mrys:mrys-valid:1.0-SNAPSHOT")
 	compileOnly("org.projectlombok:lombok")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")

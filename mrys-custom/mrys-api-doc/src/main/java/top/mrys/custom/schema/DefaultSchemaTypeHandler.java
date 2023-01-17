@@ -2,7 +2,6 @@ package top.mrys.custom.schema;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateTime;
-import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ClassUtil;
 import cn.hutool.core.util.StrUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -76,10 +75,10 @@ public class DefaultSchemaTypeHandler implements SchemaTypeHandler {
           throw new RuntimeException("不支持的类型");
         }
         if (BeanUtil.isBean(aClass)) {
-          Type[] types = parameterizedType.getActualTypeArguments();
-          if (ArrayUtil.isNotEmpty(types)&&!(types[0] instanceof WildcardType)) {
+//          Type[] types = parameterizedType.getActualTypeArguments();
+//          if (ArrayUtil.isNotEmpty(types) && !(types[0] instanceof WildcardType)) {
             metadata = new SchemaMetadata(metadata.type(), getParameterizedTypeName(metadata.type()), metadata.description(), metadata.schemaMap());
-          }
+//          }
           return getBeanSchema(metadata, aClass);
         }
       }
@@ -103,6 +102,7 @@ public class DefaultSchemaTypeHandler implements SchemaTypeHandler {
         return new ArraySchema().items(schema);
       }
       if (BeanUtil.isBean(aClass)) {
+        metadata = new SchemaMetadata(metadata.type(), getParameterizedTypeName(metadata.type()), metadata.description(), metadata.schemaMap());
         return getBeanSchema(metadata, aClass);
       }
     }
@@ -111,7 +111,7 @@ public class DefaultSchemaTypeHandler implements SchemaTypeHandler {
 
   private Schema getBeanSchema(SchemaMetadata metadata, Class<?> aClass) {
     Map<String, Schema> p = new HashMap<>();
-    Arrays.stream(ClassUtil.getDeclaredFields(aClass))
+    getFields(aClass).stream()
       .filter(field -> !Modifier.isStatic(field.getModifiers()))
       .filter(field -> !Modifier.isTransient(field.getModifiers()))
       .filter(field -> !Modifier.isFinal(field.getModifiers()))
@@ -139,23 +139,35 @@ public class DefaultSchemaTypeHandler implements SchemaTypeHandler {
     return new ObjectSchema().$ref($ref);
   }
 
-  private String getParameterizedTypeName(Type type) {
-    if (type instanceof ParameterizedType parameterizedType) {
-      Type rawType = parameterizedType.getRawType();
-      if (rawType instanceof Class<?> aClass) {
-        Type[] typeArguments = parameterizedType.getActualTypeArguments();
-        if (typeArguments.length == 1) {
-          Type typeArgument = typeArguments[0];
-          if (typeArgument instanceof ParameterizedType) {
-            return aClass.getSimpleName() + "<" + getParameterizedTypeName(typeArgument) + ">";
-          }
-          if (typeArgument instanceof Class<?> aClass1) {
-            return aClass.getSimpleName() + "<" + aClass1.getSimpleName() + ">";
-          }
-        }
-      }
+  public List<Field> getFields(Class<?> aClass) {
+    List<Field> fields = new ArrayList<>();
+    Class<?> currentClass = aClass;
+    while (currentClass != null && currentClass != Object.class) {
+      fields.addAll(Arrays.asList(currentClass.getDeclaredFields()));
+      currentClass = currentClass.getSuperclass();
     }
+    return fields;
+  }
+
+  private String getParameterizedTypeName(Type type) {
     return type.getTypeName();
+    //todo 内部类 没解决
+//    if (type instanceof ParameterizedType parameterizedType) {
+//      Type rawType = parameterizedType.getRawType();
+//      if (rawType instanceof Class<?> aClass) {
+//        Type[] typeArguments = parameterizedType.getActualTypeArguments();
+//        if (typeArguments.length == 1) {
+//          Type typeArgument = typeArguments[0];
+//          if (typeArgument instanceof ParameterizedType) {
+//            return aClass.getSimpleName() + "<" + getParameterizedTypeName(typeArgument) + ">";
+//          }
+//          if (typeArgument instanceof Class<?> aClass1) {
+//            return aClass.getSimpleName() + "<" + aClass1.getSimpleName() + ">";
+//          }
+//        }
+//      }
+//    }
+//    return type.getTypeName();
   }
 
   public static void main(String[] args) throws NoSuchMethodException, IOException {
@@ -168,7 +180,31 @@ public class DefaultSchemaTypeHandler implements SchemaTypeHandler {
 
   }
 
-  public Result<Map<String,SchemaMetadata>> test() {
+  public static class A {
+    private String a;
+    private String b;
+
+    public String getA() {
+      return a;
+    }
+
+    public void setA(String a) {
+      this.a = a;
+    }
+
+    public String getB() {
+      return b;
+    }
+
+    public void setB(String b) {
+      this.b = b;
+    }
+  }
+
+  public static class T extends A {
+  }
+
+  public Result<T> test() {
     return Result.success();
   }
 
