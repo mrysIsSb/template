@@ -53,7 +53,6 @@ public class SysUserController {
     return sysUserService.edit(edit);
   }
 
-
   @Operation(summary = "详情", description = "获取详情")
   @HasPermission(sourceName + ":info")
   @GetMapping("{id}")
