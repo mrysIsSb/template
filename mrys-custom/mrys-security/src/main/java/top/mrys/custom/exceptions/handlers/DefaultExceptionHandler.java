@@ -1,6 +1,5 @@
 package top.mrys.custom.exceptions.handlers;
 
-import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpStatus;
@@ -15,7 +14,8 @@ public class DefaultExceptionHandler implements ExceptionHandler<Throwable>, Ord
 
   @Override
   public void handle(ServerExchange serverExchange, Throwable e) {
-    serverExchange.getResponse().ret(HttpStatus.OK, JSONUtil.toJsonStr(Result.fail(e.getMessage())));
+    log.warn(e.getMessage());
+    serverExchange.getResponse().ret(HttpStatus.OK, Result.fail(e.getMessage()).toJson());
   }
 
   @Override

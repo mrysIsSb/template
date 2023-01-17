@@ -1,6 +1,7 @@
 package top.mrys.core;
 
 import java.util.Optional;
+import java.util.ServiceLoader;
 import java.util.function.Function;
 
 /**
@@ -14,6 +15,8 @@ public class Result<T> {
 
   public static int SUCCESS = 0;
   public static int FAIL = -1;
+
+  private static final ServiceLoader<JsonConvertor> convertors = ServiceLoader.load(JsonConvertor.class);
 
   // ----------------------base begin----------------------
   public Result() {
@@ -57,6 +60,10 @@ public class Result<T> {
 //      Result{code=%d, msg='%s', data=%s}
 //      """.formatted(code, msg, data);
     return "Result{code=%d, msg='%s', data=%s}".formatted(code, msg, data);
+  }
+
+  public String toJson() {
+    return convertors.findFirst().orElseThrow().toJson(this);
   }
 
   // ----------------------override end----------------------

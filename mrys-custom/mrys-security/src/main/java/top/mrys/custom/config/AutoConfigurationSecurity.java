@@ -45,10 +45,7 @@ import top.mrys.custom.annotations.AuthAlias;
 import top.mrys.custom.core.*;
 import top.mrys.custom.exceptions.AuthenticationException;
 import top.mrys.custom.exceptions.NoLoginException;
-import top.mrys.custom.exceptions.handlers.DefaultExceptionHandler;
-import top.mrys.custom.exceptions.handlers.ExceptionHandler;
-import top.mrys.custom.exceptions.handlers.ExceptionHandlerRegistry;
-import top.mrys.custom.exceptions.handlers.ServletExceptionHandler;
+import top.mrys.custom.exceptions.handlers.*;
 import top.mrys.custom.filters.*;
 import top.mrys.custom.login.functions.LoginFunctionRedirect;
 import top.mrys.custom.login.functions.LoginFunctionResult;
@@ -111,6 +108,11 @@ public class AutoConfigurationSecurity {
   @Bean
   public ServletExceptionHandler servletExceptionHandler() {
     return new ServletExceptionHandler();
+  }
+
+  @Bean
+  public ResultExceptionHandler resultExceptionHandler() {
+    return new ResultExceptionHandler();
   }
 
 

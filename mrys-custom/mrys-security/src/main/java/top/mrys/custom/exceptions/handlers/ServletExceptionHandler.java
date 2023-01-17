@@ -1,11 +1,9 @@
 package top.mrys.custom.exceptions.handlers;
 
-import cn.hutool.json.JSONUtil;
 import jakarta.servlet.ServletException;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
-import org.springframework.http.HttpStatus;
-import top.mrys.core.Result;
 import top.mrys.custom.core.ServerExchange;
 
 /**
@@ -22,9 +20,10 @@ public class ServletExceptionHandler implements ExceptionHandler<ServletExceptio
   }
 
   @Override
+  @SneakyThrows
   public void handle(ServerExchange serverExchange, ServletException e) {
-    log.error(e.getMessage(), e);
-    serverExchange.getResponse().ret(HttpStatus.OK, JSONUtil.toJsonStr(Result.fail(e.getRootCause().getMessage())));
+    log.error(e.getMessage());
+    throw e.getRootCause();
   }
 
   @Override

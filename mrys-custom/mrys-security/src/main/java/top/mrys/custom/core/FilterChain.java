@@ -25,8 +25,7 @@ public class FilterChain {
         filters.get(index++).doFilter(exchange, this);
       } catch (Throwable e) {
         //所有满足条件的第一个异常处理器处理
-        exceptionHandlerRegistry.getExceptionHandler(e)
-          .ifPresent(handler -> handler.handle(exchange, e));
+        exceptionHandlerRegistry.handle(exchange, e);
       }
 
     }

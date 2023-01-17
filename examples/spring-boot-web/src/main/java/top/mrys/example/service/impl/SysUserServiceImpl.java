@@ -49,6 +49,9 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser> 
   @Override
   public Result<SysUserInfo> info(Integer id) {
     SysUser data = super.getById(id);
+    if (data == null) {
+      return Result.fail("数据不存在");
+    }
     SysUserInfo info = new SysUserInfo();
     BeanUtil.copyProperties(data, info);
     return Result.success(info);
