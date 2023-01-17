@@ -23,9 +23,9 @@ public interface SysUserService extends BaseService<SysUser> {
 
   Result<EditSysUser> edit(EditSysUser edit);
 
-  Result<SysUserInfo> info(Integer id);
+  Result<SysUserInfo> info(String id);
 
-  Result<Boolean> del(Integer[] ids);
+  Result<Boolean> del(String[] ids);
 
   @Setter
   @Getter

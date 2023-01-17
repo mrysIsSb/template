@@ -2,6 +2,7 @@ package top.mrys.example.domain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -9,6 +10,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+import top.mrys.example.enums.EnumDel;
 
 import java.util.Date;
 
@@ -25,7 +27,7 @@ import java.util.Date;
 public class SysUser extends Model<SysUser> {
 
   @Schema(description = "用户id")
-  @TableId(type = IdType.AUTO)
+  @TableId(type = IdType.ASSIGN_ID)
   private Long uid;
 
   @Schema(description = "用户名称")
@@ -39,6 +41,10 @@ public class SysUser extends Model<SysUser> {
 
   @Schema(description = "创建时间")
   private Date createTime;
+
+  @Schema(description = "逻辑删除")
+  @TableLogic(value = "0", delval = "1")
+  private EnumDel delFlag;
 
 
 }

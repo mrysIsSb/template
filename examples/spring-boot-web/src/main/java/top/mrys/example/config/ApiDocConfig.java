@@ -21,7 +21,6 @@ public class ApiDocConfig {
 //    return info -> info.title("mrys-web").version("1.0");
 //  }
  @Bean
-//  public RouterFunctionDsl
   public RouterFunction<ServerResponse> routerFunction( OpenApiProvider openApiProvider) {
     return RouterFunctions
       .route()

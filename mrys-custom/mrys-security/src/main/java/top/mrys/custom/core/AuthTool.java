@@ -1,5 +1,7 @@
 package top.mrys.custom.core;
 
+import java.util.Optional;
+
 public class AuthTool {
 
   /**
@@ -30,11 +32,10 @@ public class AuthTool {
    * 判断当前用户是否有权限
    */
   public static boolean hasPermission(String permission){
-    UserInfo userInfo = getUserInfo();
-    if (userInfo == null) {
-      return false;
-    }
-    return userInfo.getPermissions().contains(permission);
+    return Optional.<UserInfo>ofNullable(getUserInfo())
+      .map(UserInfo::getPermissions)
+      .map(permissions -> permissions.contains(permission))
+      .orElse(false);
   }
 
   public static boolean isLogin() {

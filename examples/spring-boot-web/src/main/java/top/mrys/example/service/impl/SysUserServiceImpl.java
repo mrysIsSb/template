@@ -47,7 +47,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser> 
   }
 
   @Override
-  public Result<SysUserInfo> info(Integer id) {
+  public Result<SysUserInfo> info(String id) {
     SysUser data = super.getById(id);
     if (data == null) {
       return Result.fail("数据不存在");
@@ -58,7 +58,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser> 
   }
 
   @Override
-  public Result<Boolean> del(Integer[] ids) {
+  public Result<Boolean> del(String[] ids) {
     Integer i = super.delByIds(ids);
     return Result.assert0(ids.length == i, "成功:" + i + ",失败:" + (ids.length - i), true);
   }

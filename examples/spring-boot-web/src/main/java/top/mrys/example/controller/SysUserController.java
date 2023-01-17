@@ -12,7 +12,6 @@ import top.mrys.core.PageResult;
 import top.mrys.core.Result;
 import top.mrys.custom.Group;
 import top.mrys.custom.annotations.HasPermission;
-import top.mrys.example.domain.SysUser;
 import top.mrys.example.service.SysUserService;
 import top.mrys.example.service.SysUserService.EditSysUser;
 import top.mrys.example.service.SysUserService.SearchSysUser;
@@ -43,8 +42,8 @@ public class SysUserController {
   @Operation(summary = "新增", description = "添加")
   @HasPermission(sourceName + ":add")
   @PostMapping("/add")
-  public Result<EditSysUser> add(@Validated(Group.Add.class) @RequestBody SysUser edit) {
-    return sysUserService.add((EditSysUser) edit);
+  public Result<EditSysUser> add(@Validated(Group.Add.class) @RequestBody EditSysUser edit) {
+    return sysUserService.add(edit);
   }
 
   @Operation(summary = "修改", description = "修改")
@@ -58,14 +57,14 @@ public class SysUserController {
   @Operation(summary = "详情", description = "获取详情")
   @HasPermission(sourceName + ":info")
   @GetMapping("{id}")
-  public Result<SysUserInfo> info(@Validated @NotNull @PathVariable Integer id) {
+  public Result<SysUserInfo> info(@Validated @NotNull @PathVariable String id) {
     return sysUserService.info(id);
   }
 
   @Operation(summary = "删除", description = "删除")
   @HasPermission(sourceName + ":del")
   @DeleteMapping("{ids}")
-  public Result<Boolean> del(@Validated @NotNull @PathVariable Integer[] ids) {
+  public Result<Boolean> del(@Validated @NotNull @PathVariable String[] ids) {
     return sysUserService.del(ids);
   }
 
