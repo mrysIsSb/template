@@ -16,12 +16,12 @@ import top.mrys.custom.OpenApiProvider;
 @Configuration(proxyBeanMethods = false)
 public class ApiDocConfig {
 
-//  @Bean
+  //  @Bean
 //  public ApiInfoCustomizer apiInfoCustomizer() {
 //    return info -> info.title("mrys-web").version("1.0");
 //  }
- @Bean
-  public RouterFunction<ServerResponse> routerFunction( OpenApiProvider openApiProvider) {
+  @Bean
+  public RouterFunction<ServerResponse> routerFunction(OpenApiProvider openApiProvider) {
     return RouterFunctions
       .route()
       .GET("/v3/api-doc", request -> ServerResponse.ok().body(JSONUtil.toJsonStr(openApiProvider.getOpenApi())))
