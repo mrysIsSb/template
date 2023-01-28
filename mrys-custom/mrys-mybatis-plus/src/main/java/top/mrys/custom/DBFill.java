@@ -16,7 +16,7 @@ import java.lang.annotation.Target;
 @Inherited
 public @interface DBFill {
 
-  Class<DBFillData> value();
+  Class<? extends DBFillData> value();
 
   EnumActionType[] types() default {EnumActionType.INSERT, EnumActionType.UPDATE};
 }

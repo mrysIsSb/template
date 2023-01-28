@@ -35,3 +35,9 @@ security:
         permissions:
           - "user:query"
 #          - "auth:test"
+      - token: "test_tenant_1"
+        user-id: tenant_user_1
+        super-admin: false
+        tenant-id: 1
+        permissions:
+          - "tenantRole:list"

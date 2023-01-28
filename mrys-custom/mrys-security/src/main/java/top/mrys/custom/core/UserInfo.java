@@ -16,6 +16,12 @@ public interface UserInfo {
 
     String getUserName();
 
+  /**
+   * 租户id
+   * @return
+   */
+    String getTenantId();
+
     /**
      * 是否是超级管理员
      */

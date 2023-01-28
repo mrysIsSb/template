@@ -36,6 +36,8 @@ public class SecurityProperties {
 
     private boolean superAdmin;
 
+    private String tenantId;
+
     private List<String> roles;
 
     private List<String> permissions;
@@ -47,6 +49,7 @@ public class SecurityProperties {
       info.setSuperAdmin(this.isSuperAdmin());
       info.setRoles(this.getRoles());
       info.setPermissions(this.getPermissions());
+      info.setTenantId(this.getTenantId());
       return info;
     }
   }

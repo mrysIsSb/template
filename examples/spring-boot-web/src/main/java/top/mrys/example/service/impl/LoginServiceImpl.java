@@ -25,7 +25,7 @@ public class LoginServiceImpl implements LoginService {
     BaseUserInfo info = new BaseUserInfo();
     info.setUserId(sysUser.getUid().toString());
     info.setUserName(sysUser.getUsername());
-    info.setSuperAdmin(false);
+    info.setSuperAdmin(true);
     info.setAttrs(new HashMap<>() {{
       put("nickname", sysUser.getNickname());
       put("avatar", sysUser.getAvatar());

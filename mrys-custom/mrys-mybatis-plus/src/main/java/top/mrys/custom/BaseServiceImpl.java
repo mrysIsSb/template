@@ -10,16 +10,18 @@ import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.plugins.pagination.PageDTO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.AnnotatedElementUtils;
+import top.mrys.core.PageParam;
+import top.mrys.core.PageResult;
+import top.mrys.core.ResultException;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Autowired;
-import top.mrys.core.PageParam;
-import top.mrys.core.PageResult;
-import top.mrys.core.ResultException;
 
 /**
  * @author mrys
@@ -54,15 +56,15 @@ public class BaseServiceImpl<M extends BaseMapper<T>, T> implements BaseService<
   protected void fillData(T t, EnumActionType type) {
     TableInfo tableInfo = TableInfoHelper.getTableInfo(t.getClass());
     tableInfo.getFieldList().stream()
-      .filter(column -> column.getField().getAnnotation(DBFill.class) != null)
+      .filter(column -> AnnotatedElementUtils.hasAnnotation(column.getField(), DBFill.class))
       .filter(
-        column -> ArrayUtil.contains(column.getField().getAnnotation(DBFill.class).types(),
+        column -> ArrayUtil.contains(Objects.requireNonNull(AnnotatedElementUtils.findMergedAnnotation(column.getField(), DBFill.class)).types(),
           type))
       .forEach(column -> {
         Object value = ReflectUtil.getFieldValue(t, column.getProperty());
         if (Objects.isNull(value)) {
           DBFillData dbFillData = SpringTool.getBean(
-            column.getField().getAnnotation(DBFill.class).value());
+            Objects.requireNonNull(AnnotatedElementUtils.findMergedAnnotation(column.getField(), DBFill.class)).value());
           dbFillData.fill(t, column.getField(), type);
         }
       });
