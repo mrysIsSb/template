@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+import top.mrys.custom.DBEvent;
 import top.mrys.example.enums.EnumDel;
 
 import java.util.Date;
@@ -24,6 +25,7 @@ import java.util.Date;
 @ToString
 @Accessors(chain = true)
 @TableName("sys_user")
+@DBEvent
 public class SysUser extends Model<SysUser> {
 
   @Schema(description = "用户id")

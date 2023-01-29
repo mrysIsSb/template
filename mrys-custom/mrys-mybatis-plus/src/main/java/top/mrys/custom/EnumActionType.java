@@ -5,5 +5,5 @@ package top.mrys.custom;
  * by: mrys
  */
 public enum EnumActionType {
-  INSERT, UPDATE;
+  INSERT, UPDATE, DELETE;
 }
