@@ -61,8 +61,7 @@ public class WebMvcRequestHandlerProvider implements ApiPathsCustomizer, ApiSche
     Optional<ServletContext> servletContext,
     List<RequestMappingInfoHandlerMapping> handlerMappings) {
     this.handlerMappings = handlerMappings;
-    this.contextPath = servletContext
-      .map(ServletContext::getContextPath).orElse("");
+    this.contextPath = servletContext.map(ServletContext::getContextPath).orElse("");
     log.info("contextPath:{}", contextPath);
     init();
   }
@@ -77,8 +76,10 @@ public class WebMvcRequestHandlerProvider implements ApiPathsCustomizer, ApiSche
         if (!handlerMethod.hasMethodAnnotation(io.swagger.v3.oas.annotations.Operation.class)) {
           return;
         }
+        //获取路径
         String path = requestMappingInfo.getPatternValues().stream().findFirst().orElse("");
         if (StrUtil.isBlank(path)) {
+          //没有路径 不处理
           return;
         }
         PathItem item = new PathItem();

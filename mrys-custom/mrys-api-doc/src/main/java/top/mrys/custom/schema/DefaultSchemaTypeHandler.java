@@ -77,7 +77,7 @@ public class DefaultSchemaTypeHandler implements SchemaTypeHandler {
         if (BeanUtil.isBean(aClass)) {
 //          Type[] types = parameterizedType.getActualTypeArguments();
 //          if (ArrayUtil.isNotEmpty(types) && !(types[0] instanceof WildcardType)) {
-            metadata = new SchemaMetadata(metadata.type(), getParameterizedTypeName(metadata.type()), metadata.description(), metadata.schemaMap());
+          metadata = new SchemaMetadata(metadata.type(), getParameterizedTypeName(metadata.type()), metadata.description(), metadata.schemaMap());
 //          }
           return getBeanSchema(metadata, aClass);
         }
