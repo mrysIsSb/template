@@ -33,7 +33,6 @@ repositories {
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
     implementation("org.springframework.boot:spring-boot-starter-web")
-//    implementation("com.github.mrysIsSb:mrys-common:master-8cc6c8cf7b-1")
     //swagger
     testImplementation("io.springfox:springfox-boot-starter:3.0.0")
     //api doc
