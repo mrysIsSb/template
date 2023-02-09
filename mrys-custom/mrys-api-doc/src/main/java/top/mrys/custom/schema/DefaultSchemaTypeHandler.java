@@ -109,13 +109,27 @@ public class DefaultSchemaTypeHandler implements SchemaTypeHandler {
     return new Schema<>();
   }
 
+  //用来存储已经处理过的类，防止循环引用
+  private ThreadLocal<Set<Class>> threadLocal = new ThreadLocal<>();
+
   private Schema getBeanSchema(SchemaMetadata metadata, Class<?> aClass) {
     Map<String, Schema> p = new HashMap<>();
+    Set<Class> set = threadLocal.get();
+    if (set == null) {
+      set = new HashSet<>();
+    }
+    set.add(aClass);
+    threadLocal.set(set);
+
     getFields(aClass).stream()
       .filter(field -> !Modifier.isStatic(field.getModifiers()))
       .filter(field -> !Modifier.isTransient(field.getModifiers()))
       .filter(field -> !Modifier.isFinal(field.getModifiers()))
       .filter(field -> !AnnotatedElementUtils.hasAnnotation(field, JsonIgnore.class))
+      .filter(field -> {
+        Set<Class> set1 = threadLocal.get();
+        return !set1.contains(field.getType());
+      })
       .forEach(field -> {
         String desc = Optional.ofNullable(field.getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class))
           .map(io.swagger.v3.oas.annotations.media.Schema::description)
@@ -182,7 +196,7 @@ public class DefaultSchemaTypeHandler implements SchemaTypeHandler {
 
   public static class A {
     private String a;
-    private String b;
+    private B b;
 
     public String getA() {
       return a;
@@ -192,12 +206,24 @@ public class DefaultSchemaTypeHandler implements SchemaTypeHandler {
       this.a = a;
     }
 
-    public String getB() {
+    public B getB() {
       return b;
     }
 
-    public void setB(String b) {
+    public void setB(B b) {
       this.b = b;
+    }
+  }
+
+  public static class B {
+    private A a;
+
+    public A getA() {
+      return a;
+    }
+
+    public void setA(A a) {
+      this.a = a;
     }
   }
 
