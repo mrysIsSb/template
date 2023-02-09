@@ -4,6 +4,7 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Paths;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.oas.models.tags.Tag;
 import org.springframework.context.annotation.Bean;
@@ -26,6 +27,7 @@ public class ApiDocAutoConfiguration {
                                          Optional<List<ApiPathsCustomizer>> apiPathsCustomizers,
                                          Optional<List<ApiTagsCustomizer>> apiTagsCustomizers,
                                          Optional<List<ApiSchemaCustomizer>> apiSchemaCustomizers,
+                                          Optional<List<ApiSecuritySchemesCustomizer>> apiSecuritySchemesCustomizers,
                                          Optional<List<OpenAPICustomizer>> openAPICustomizers) {
     return () -> {
       OpenAPI api = new OpenAPI();
@@ -52,6 +54,10 @@ public class ApiDocAutoConfiguration {
       Map<String, Schema> schemas = new HashMap<>();
       apiSchemaCustomizers.ifPresent(customizers -> customizers.forEach(customizer -> customizer.customize(schemas)));
       schemas.forEach(api::schema);
+
+      Map<String, SecurityScheme> securitySchemes = new HashMap<>();
+      apiSecuritySchemesCustomizers.ifPresent(customizers -> customizers.forEach(customizer -> customizer.customize(securitySchemes)));
+      securitySchemes.forEach(api::schemaRequirement);
 
       //定制修改 openapi
       openAPICustomizers.ifPresent(customizers -> customizers.forEach(customizer -> customizer.customize(api)));
