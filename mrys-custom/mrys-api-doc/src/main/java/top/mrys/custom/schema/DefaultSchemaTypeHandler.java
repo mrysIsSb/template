@@ -6,6 +6,7 @@ import cn.hutool.core.util.ClassUtil;
 import cn.hutool.core.util.StrUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.models.media.*;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import top.mrys.core.Result;
@@ -115,11 +116,13 @@ public class DefaultSchemaTypeHandler implements SchemaTypeHandler {
   private ThreadLocal<Set<Class>> threadLocal = new ThreadLocal<>();
 
   private Schema getBeanSchema(SchemaMetadata metadata, Class<?> aClass) {
-    log.info("解析:{}", aClass);
+    log.debug("解析:{}", aClass);
     Map<String, Schema> p = new HashMap<>();
     Set<Class> set = threadLocal.get();
     if (set == null) {
       set = new HashSet<>();
+    }else if(set.contains(aClass)){
+      return new Schema();
     }
     set.add(aClass);
     threadLocal.set(set);
@@ -153,6 +156,9 @@ public class DefaultSchemaTypeHandler implements SchemaTypeHandler {
     String name = StrUtil.blankToDefault(metadata.name(), aClass.getSimpleName());
     metadata.schemaMap().put(name, schema);
     String $ref = COMPONENTS_SCHEMAS + name;
+    set = threadLocal.get();
+    set.remove(aClass);
+    threadLocal.set(set);
     return new ObjectSchema().$ref($ref);
   }
 
@@ -197,37 +203,16 @@ public class DefaultSchemaTypeHandler implements SchemaTypeHandler {
 
   }
 
+  @Data
   public static class A {
-    private String a;
+    private List<A> a;
     private B b;
-
-    public String getA() {
-      return a;
-    }
-
-    public void setA(String a) {
-      this.a = a;
-    }
-
-    public B getB() {
-      return b;
-    }
-
-    public void setB(B b) {
-      this.b = b;
-    }
   }
 
+  @Data
   public static class B {
     private A a;
 
-    public A getA() {
-      return a;
-    }
-
-    public void setA(A a) {
-      this.a = a;
-    }
   }
 
   public static class T extends A {
