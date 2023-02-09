@@ -6,6 +6,7 @@ import cn.hutool.core.util.ClassUtil;
 import cn.hutool.core.util.StrUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.models.media.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import top.mrys.core.Result;
 
@@ -19,6 +20,7 @@ import java.util.*;
 /**
  * @author mrys
  */
+@Slf4j
 public class DefaultSchemaTypeHandler implements SchemaTypeHandler {
 
   private static final Map<Type, SchemaTypeHandler> schemaTypeHandlerMap = new HashMap<>();
@@ -113,6 +115,7 @@ public class DefaultSchemaTypeHandler implements SchemaTypeHandler {
   private ThreadLocal<Set<Class>> threadLocal = new ThreadLocal<>();
 
   private Schema getBeanSchema(SchemaMetadata metadata, Class<?> aClass) {
+    log.debug("getBeanSchema:{}", aClass);
     Map<String, Schema> p = new HashMap<>();
     Set<Class> set = threadLocal.get();
     if (set == null) {
