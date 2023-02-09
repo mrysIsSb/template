@@ -115,7 +115,7 @@ public class DefaultSchemaTypeHandler implements SchemaTypeHandler {
   private ThreadLocal<Set<Class>> threadLocal = new ThreadLocal<>();
 
   private Schema getBeanSchema(SchemaMetadata metadata, Class<?> aClass) {
-    log.debug("getBeanSchema:{}", aClass);
+    log.info("解析:{}", aClass);
     Map<String, Schema> p = new HashMap<>();
     Set<Class> set = threadLocal.get();
     if (set == null) {
