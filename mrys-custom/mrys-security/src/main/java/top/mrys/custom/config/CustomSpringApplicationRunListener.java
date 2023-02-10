@@ -3,7 +3,9 @@ package top.mrys.custom.config;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplicationRunListener;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.web.context.ConfigurableWebApplicationContext;
 import top.mrys.custom.core.SecurityContext;
+import top.mrys.custom.core.SecurityContextHolder;
 
 import java.time.Duration;
 
@@ -16,9 +18,12 @@ public class CustomSpringApplicationRunListener implements SpringApplicationRunL
 
   @Override
   public void started(ConfigurableApplicationContext context, Duration timeTaken) {
-    log.info("spring boot started set security context");
+    log.info("spring boot started set security context:{}", context.getClass());
     try {
-      SecurityContext bean = context.getBean(SecurityContext.class);
+      if (context instanceof ConfigurableWebApplicationContext) {
+        SecurityContext bean = context.getBean(SecurityContext.class);
+        SecurityContextHolder.setContext(bean);
+      }
     } catch (Exception e) {
       log.error("spring boot started set security context error", e);
     }
