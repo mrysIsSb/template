@@ -16,7 +16,8 @@ public class Result<T> {
   public static int SUCCESS = 0;
   public static int FAIL = -1;
 
-  private static final ServiceLoader<JsonConvertor> convertors = ServiceLoader.load(JsonConvertor.class);
+  private static final ServiceLoader<JsonConvertor> JSON_CONVERTORS = ServiceLoader.load(JsonConvertor.class);
+
 
   // ----------------------base begin----------------------
   public Result() {
@@ -63,8 +64,9 @@ public class Result<T> {
   }
 
   public String toJson() {
-    return convertors.findFirst().orElseThrow().toJson(this);
+    return JSON_CONVERTORS.findFirst().orElseThrow().toJson(this);
   }
+
 
   // ----------------------override end----------------------
   // ----------------------method begin----------------------
