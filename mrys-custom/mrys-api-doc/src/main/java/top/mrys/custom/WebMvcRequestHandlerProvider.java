@@ -73,7 +73,8 @@ public class WebMvcRequestHandlerProvider implements ApiPathsCustomizer, ApiSche
 
     handlerMappings.forEach(handlerMapping -> {
       handlerMapping.getHandlerMethods().forEach((requestMappingInfo, handlerMethod) -> {
-        if (!handlerMethod.hasMethodAnnotation(io.swagger.v3.oas.annotations.Operation.class)) {
+        //没有注解 不处理
+        if (!AnnotatedElementUtils.hasAnnotation(handlerMethod.getMethod(), io.swagger.v3.oas.annotations.Operation.class)) {
           return;
         }
         //获取路径

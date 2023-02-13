@@ -16,8 +16,17 @@ import java.time.Duration;
 @Slf4j
 public class CustomSpringApplicationRunListener implements SpringApplicationRunListener {
 
+//  @Override
+//  public void started(ConfigurableApplicationContext context, Duration timeTaken) {
+//    setSecurityCOntext(context);
+//  }
+
   @Override
-  public void started(ConfigurableApplicationContext context, Duration timeTaken) {
+  public void ready(ConfigurableApplicationContext context, Duration timeTaken) {
+    setSecurityCOntext(context);
+  }
+
+  private static void setSecurityCOntext(ConfigurableApplicationContext context) {
     log.info("spring boot started set security context:{}", context.getClass());
     try {
       if (context instanceof ConfigurableWebApplicationContext) {
