@@ -72,6 +72,23 @@
       <artifactId>hutool-core</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>cn.hutool</groupId>
+      <artifactId>hutool-json</artifactId>
+    </dependency>
+
+    <!--  test  -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>cn.hutool</groupId>
+      <artifactId>hutool-all</artifactId>
+      <version>5.8.11</version>
+      <scope>test</scope>
+    </dependency>
 
   </dependencies>
 

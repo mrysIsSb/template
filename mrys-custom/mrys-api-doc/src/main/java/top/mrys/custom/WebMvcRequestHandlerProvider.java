@@ -87,11 +87,12 @@ public class WebMvcRequestHandlerProvider implements ApiPathsCustomizer, ApiSche
         Operation operation = new Operation();
         Optional.ofNullable(AnnotatedElementUtils.findMergedAnnotation(handlerMethod.getBeanType(), Tag.class))
           .ifPresent(tag -> operation.addTagsItem(tag.name()));
-        Arrays.stream(handlerMethod.getMethod().getAnnotationsByType(io.swagger.v3.oas.annotations.Operation.class))
-          .findFirst().ifPresent(op -> {
-            operation.summary(op.summary());
-            operation.description(op.description());
-          });
+        io.swagger.v3.oas.annotations.Operation operationAnnotated = AnnotatedElementUtils.findMergedAnnotation(handlerMethod.getMethod(), io.swagger.v3.oas.annotations.Operation.class);
+        if (Objects.nonNull(operationAnnotated)) {
+          operation.summary(operationAnnotated.summary());
+          operation.description(operationAnnotated.description());
+        }
+
         requestMappingInfo.getMethodsCondition().getMethods().forEach(method -> {
           switch (method) {
             case GET -> item.get(operation);
