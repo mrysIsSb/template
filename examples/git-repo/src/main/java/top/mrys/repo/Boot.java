@@ -41,7 +41,8 @@ public class Boot {
 
   private static final List<String> groups = List.of("qstmall");
 
-
+  private static final UsernamePasswordCredentialsProvider credentialsProviderOld = new UsernamePasswordCredentialsProvider("", "");
+  private static final UsernamePasswordCredentialsProvider credentialsProviderNew = new UsernamePasswordCredentialsProvider("", "");
 
 
   public static void main(String[] args) {

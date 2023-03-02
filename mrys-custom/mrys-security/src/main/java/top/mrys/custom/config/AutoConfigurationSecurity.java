@@ -168,7 +168,6 @@ public class AutoConfigurationSecurity {
       //过滤器链异常处理
       filterChain.setExceptionHandlerRegistry(exceptionHandlerRegistry);
 
-
       MvcRequest mvcRequest = new MvcRequest((HttpServletRequest) request);
       MvcResponse mvcResponse = new MvcResponse((HttpServletResponse) response);
 
@@ -209,7 +208,14 @@ public class AutoConfigurationSecurity {
               log.trace("需要拦截");
               return checkAuth(handlerMethod.getBeanType(), context, parser, templateParserContext);
             }
-            return AuthTool.isLogin();
+            boolean login = AuthTool.isLogin();
+            if (login) {
+              log.trace("已登录");
+            } else {
+              log.trace("未登录");
+              throw new NoLoginException();
+            }
+            return login;
           }
           return true;
         }
@@ -240,9 +246,9 @@ public class AutoConfigurationSecurity {
           Authentication authentication = loginFunction.login(functionRequest);
 
           if (authentication != null && authentication.isAuthenticated()) {
+            //todo 登录成功
             //登录成功
             SecurityContextHolder.getContext().setAuthentication(authentication);
-
             //返回json
             if (loginFunction instanceof LoginFunctionResult result) {
               return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
@@ -252,8 +258,8 @@ public class AutoConfigurationSecurity {
             if (loginFunction instanceof LoginFunctionRedirect redirect) {
               return ServerResponse.temporaryRedirect(URI.create(redirect.getRedirectUrl(authentication))).build();
             }
-
           }
+          //todo 登录失败
 
           return ServerResponse.ok()
             .contentType(MediaType.APPLICATION_JSON)
