@@ -73,48 +73,39 @@ public class AutoConfigurationSecurity {
   public SecurityContext securityContext() {
     return new ThreadLocalSecurityContext();
   }
-
   @Bean
   public SecurityContextFilter securityContextFilter() {
     return new SecurityContextFilter();
   }
-
   @Bean
   public AccessTokenProviderFilter accessTokenProviderFilter() {
     return new AccessTokenProviderFilter();
   }
-
   @Bean
   @ConditionalOnBean(AccessTokenProviderFilter.class)
   public AccessTokenProvider accessTokenProvider() {
     return exchange -> exchange.getRequest().getHeader("access-token");
   }
-
   @Bean
   public AccessTokenAuthenticateFilter accessTokenAuthenticateFilter() {
     return new AccessTokenAuthenticateFilter();
   }
-
   @Bean
   public RuleFilter ruleFilter() {
     return new RuleFilter();
   }
-
   @Bean
   public DefaultExceptionHandler exceptionHandler() {
     return new DefaultExceptionHandler();
   }
-
   @Bean
   public ServletExceptionHandler servletExceptionHandler() {
     return new ServletExceptionHandler();
   }
-
   @Bean
   public ResultExceptionHandler resultExceptionHandler() {
     return new ResultExceptionHandler();
   }
-
 
   @Bean
   public ExceptionHandlerRegistry exceptionHandlerRegistry(Optional<List<ExceptionHandler>> exceptionHandlers) {
@@ -131,23 +122,16 @@ public class AutoConfigurationSecurity {
   @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
   @AutoConfigureAfter(AutoConfigurationSecurity.class)
   public static class WebMvcConfig implements Filter, WebMvcConfigurer {
-
-
     @Autowired
     private List<SecurityFilter> filters;
-
     @Autowired
     private SecurityContext securityContext;
-
     @Autowired
     private ApplicationContext applicationContext;
-
     @Autowired
     private Optional<List<LoginFunction>> loginFunctionsOptional;
-
     @Autowired
     private ExceptionHandlerRegistry exceptionHandlerRegistry;
-
     @Override
     @SneakyThrows
     public void doFilter(ServletRequest request, ServletResponse response, jakarta.servlet.FilterChain chain) throws IOException, ServletException {

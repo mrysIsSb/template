@@ -16,13 +16,13 @@ import top.mrys.custom.login.functions.LocalLoginFunction;
 @ConditionalOnBean(AutoConfigurationSecurity.class)
 @AutoConfigureAfter(AutoConfigurationSecurity.class)
 public class AutoConfigurationLocal {
-    @Bean
-    public PropertiesTokenAuthenticateProvider propertiesTokenAuthenticateProvider(SecurityProperties securityProperties) {
-        return new PropertiesTokenAuthenticateProvider(securityProperties.getLocal().getUsers());
-    }
+  @Bean
+  public PropertiesTokenAuthenticateProvider propertiesTokenAuthenticateProvider(SecurityProperties securityProperties) {
+    return new PropertiesTokenAuthenticateProvider(securityProperties.getLocal().getUsers());
+  }
 
-    @Bean
-    public LocalLoginFunction localLoginFunction(SecurityProperties securityProperties) {
-        return new LocalLoginFunction(securityProperties.getLocal().getUsers());
-    }
+  @Bean
+  public LocalLoginFunction localLoginFunction(SecurityProperties securityProperties) {
+    return new LocalLoginFunction(securityProperties.getLocal().getUsers());
+  }
 }
