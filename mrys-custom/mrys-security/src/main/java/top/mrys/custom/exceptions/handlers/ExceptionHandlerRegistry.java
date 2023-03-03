@@ -1,10 +1,12 @@
 package top.mrys.custom.exceptions.handlers;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import top.mrys.custom.core.ServerExchange;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * @author mrys
@@ -13,6 +15,8 @@ import java.util.Optional;
 public class ExceptionHandlerRegistry implements ExceptionHandler {
 
   private final List<ExceptionHandler> exceptionHandlers;
+
+  private ThreadLocal<Set<ExceptionHandler>> handled = new ThreadLocal<>();
 
 
   public ExceptionHandlerRegistry() {
@@ -34,7 +38,21 @@ public class ExceptionHandlerRegistry implements ExceptionHandler {
   public void handle(ServerExchange serverExchange, Throwable throwable) {
     //循环所有的异常处理器
     try {
-      getExceptionHandler(throwable).ifPresent(handler -> handler.handle(serverExchange, throwable));
+
+      getExceptionHandler(throwable).ifPresent(handler -> {
+        Set<ExceptionHandler> handlers = handled.get();
+        if (handlers == null) {
+          handlers = new java.util.HashSet<>();
+        }
+        if (handlers.contains(handler)) {
+          log.error(throwable.getMessage(), throwable);
+          serverExchange.getResponse().ret(HttpStatus.INTERNAL_SERVER_ERROR, "循环异常处理器");
+        } else {
+          handlers.add(handler);
+          handled.set(handlers);
+          handler.handle(serverExchange, throwable);
+        }
+      });
     } catch (RuntimeException e) {
       //如果异常处理器处理异常失败，继续循环
       handle(serverExchange, e);
