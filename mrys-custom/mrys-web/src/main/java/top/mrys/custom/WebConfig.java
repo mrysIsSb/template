@@ -20,7 +20,7 @@ import java.util.Optional;
 public class WebConfig implements WebMvcConfigurer {
 
   @Resource
-  private Optional<List<ExceptionHandler>> exceptionHandlers;
+  private Optional<List<CustomExceptionHandler>> exceptionHandlers;
 
 
   @Override
@@ -31,7 +31,7 @@ public class WebConfig implements WebMvcConfigurer {
           StrUtil.format("{}:({})", EnumHttpExceptionCode.PARAM_ERROR.getMsg(), ex1.getMessage()));
       }
       exceptionHandlers.ifPresent(handlers -> {
-        for (ExceptionHandler handler1 : handlers) {
+        for (CustomExceptionHandler handler1 : handlers) {
           if (handler1.handler(request, response, handler, ex)) {
             return;
           }

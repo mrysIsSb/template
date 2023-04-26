@@ -7,7 +7,7 @@ import org.springframework.lang.Nullable;
 /**
  * @author mrys
  */
-public interface ExceptionHandler {
+public interface CustomExceptionHandler {
 
   boolean handler(HttpServletRequest request, HttpServletResponse response, @Nullable Object handler, Exception ex);
 }
