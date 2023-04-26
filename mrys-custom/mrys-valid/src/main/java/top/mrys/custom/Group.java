@@ -4,8 +4,8 @@ package top.mrys.custom;
  * @author mrys
  */
 public interface Group {
-  class Add {
+  interface Add {
   }
-  class Edit {
+  interface Edit {
   }
 }

@@ -33,6 +33,7 @@ import org.springframework.web.servlet.function.RouterFunction;
 import org.springframework.web.servlet.function.RouterFunctions;
 import org.springframework.web.servlet.function.ServerResponse;
 import top.mrys.core.Result;
+import top.mrys.core.ResultException;
 import top.mrys.custom.annotations.Anno;
 import top.mrys.custom.annotations.Auth;
 import top.mrys.custom.annotations.AuthAlias;
@@ -84,6 +85,9 @@ public class WebMvcConfig implements Filter, WebMvcConfigurer {
       try {
         chain.doFilter((ServletRequest) exchange.getRequest().getNativeRequest(), (ServletResponse) exchange.getResponse().getNativeResponse());
       } catch (Throwable e) {
+        if (e instanceof ResultException re){
+          log.warn(e.getMessage());
+        }
         if (log.isDebugEnabled()) {
           log.error(e.getMessage(), e);
         }
