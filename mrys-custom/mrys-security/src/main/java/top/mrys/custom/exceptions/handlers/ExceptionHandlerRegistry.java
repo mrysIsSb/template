@@ -58,6 +58,8 @@ public class ExceptionHandlerRegistry implements ExceptionHandler {
       handle(serverExchange, e);
     } catch (Throwable e) {
       log.error(e.getMessage(), e);
+    } finally {
+      handled.remove();
     }
   }
 }

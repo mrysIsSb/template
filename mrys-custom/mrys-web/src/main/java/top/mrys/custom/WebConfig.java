@@ -1,5 +1,6 @@
 package top.mrys.custom;
 
+import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -21,7 +22,8 @@ public class WebConfig implements WebMvcConfigurer {
   public void configureHandlerExceptionResolvers(List<HandlerExceptionResolver> resolvers) {
     resolvers.add((request, response, handler, ex) -> {
       if (ex instanceof HttpMessageNotReadableException ex1) {
-        throw new ResultException(EnumHttpExceptionCode.PARAM_ERROR.getCode(), EnumHttpExceptionCode.PARAM_ERROR.getMsg());
+        throw new ResultException(EnumHttpExceptionCode.PARAM_ERROR.getCode(),
+          StrUtil.format("{}:({})", EnumHttpExceptionCode.PARAM_ERROR.getMsg(), ex1.getMessage()));
       }
       log.error(ex.getMessage(), ex);
       return null;
