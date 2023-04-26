@@ -1,6 +1,7 @@
 package top.mrys.custom;
 
 import cn.hutool.core.util.StrUtil;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -9,6 +10,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import top.mrys.core.ResultException;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author mrys
@@ -16,6 +18,9 @@ import java.util.List;
 @Slf4j
 @Configuration(proxyBeanMethods = false)
 public class WebConfig implements WebMvcConfigurer {
+
+  @Resource
+  private Optional<List<ExceptionHandler>> exceptionHandlers;
 
 
   @Override
@@ -25,6 +30,13 @@ public class WebConfig implements WebMvcConfigurer {
         throw new ResultException(EnumHttpExceptionCode.PARAM_ERROR.getCode(),
           StrUtil.format("{}:({})", EnumHttpExceptionCode.PARAM_ERROR.getMsg(), ex1.getMessage()));
       }
+      exceptionHandlers.ifPresent(handlers -> {
+        for (ExceptionHandler handler1 : handlers) {
+          if (handler1.handler(request, response, handler, ex)) {
+            return;
+          }
+        }
+      });
       log.error(ex.getMessage(), ex);
       return null;
     });
