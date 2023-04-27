@@ -33,7 +33,7 @@ public class BaseUserInfo implements UserInfo {
 
   @Override
   public <T> Optional<T> getAttr(String name) {
-    if (attrs == null) {
+    if (attrs == null || attrs.isEmpty()) {
       return Optional.empty();
     }
     return Optional.ofNullable((T) attrs.get(name));
