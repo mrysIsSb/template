@@ -1,6 +1,7 @@
 package top.mrys.custom.core;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 当前用户信息
@@ -31,7 +32,7 @@ public interface UserInfo {
 
     List<String> getPermissions();
 
-    <T> T getAttr(String name);
+    <T> Optional<T> getAttr(String name);
 
 
 }

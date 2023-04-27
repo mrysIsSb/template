@@ -2,8 +2,10 @@ package top.mrys.custom.core;
 
 import lombok.Data;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author mrys
@@ -11,6 +13,10 @@ import java.util.Map;
  */
 @Data
 public class BaseUserInfo implements UserInfo {
+
+  public BaseUserInfo() {
+    this.attrs = new HashMap<>();
+  }
 
   private String userId;
   private String userName;
@@ -23,10 +29,13 @@ public class BaseUserInfo implements UserInfo {
 
   private List<String> permissions;
 
-  private Map<String , Object> attrs;
+  private Map<String, Object> attrs;
 
   @Override
-  public <T> T getAttr(String name) {
-    return (T) attrs.get(name);
+  public <T> Optional<T> getAttr(String name) {
+    if (attrs == null) {
+      return Optional.empty();
+    }
+    return Optional.ofNullable((T) attrs.get(name));
   }
 }
