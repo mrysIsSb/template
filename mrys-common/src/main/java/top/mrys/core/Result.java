@@ -2,6 +2,7 @@ package top.mrys.core;
 
 import java.util.Optional;
 import java.util.ServiceLoader;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -135,6 +136,13 @@ public class Result<T> {
 
   public Boolean isSuccess() {
     return code == SUCCESS;
+  }
+
+  //消费
+  public void ifSuccess(Consumer<T> consumer) {
+    if (isSuccess()) {
+      consumer.accept(data);
+    }
   }
 
   // ----------------------method end------------------------
