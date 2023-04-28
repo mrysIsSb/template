@@ -22,8 +22,10 @@ public class CustomBlockExceptionHandler implements BlockExceptionHandler {
     throws Exception {
     response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+    String data = JSONUtil.toJsonStr(Result.error("请求过于频繁").map(o -> e.getRule()));
+    response.setContentLength(data.length());
     response.getWriter()
-      .write(JSONUtil.toJsonStr(Result.error("请求过于频繁").map(o -> e.getRule())));
+      .write(data);
   }
 
 }
