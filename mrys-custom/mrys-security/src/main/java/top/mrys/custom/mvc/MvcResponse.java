@@ -30,7 +30,7 @@ public class MvcResponse implements Response<HttpServletResponse> {
     response.setContentType("application/json");
     response.setStatus(status.value());
     response.getWriter().write(data);
-    response.flushBuffer();
+    response.getWriter().flush();
     return this;
   }
 }
