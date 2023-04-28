@@ -29,7 +29,6 @@ public class MvcResponse implements Response<HttpServletResponse> {
     response.setCharacterEncoding("UTF-8");
     response.setContentType("application/json");
     response.setStatus(status.value());
-    response.setContentLength(data.length());
     response.getWriter().write(data);
     response.flushBuffer();
     return this;
