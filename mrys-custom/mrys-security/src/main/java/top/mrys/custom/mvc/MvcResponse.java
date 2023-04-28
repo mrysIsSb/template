@@ -31,6 +31,7 @@ public class MvcResponse implements Response<HttpServletResponse> {
     response.setStatus(status.value());
     response.setContentLength(data.length());
     response.getWriter().write(data);
+    response.flushBuffer();
     return this;
   }
 }
