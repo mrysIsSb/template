@@ -3,11 +3,9 @@ package top.mrys.custom;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.ser.BeanSerializer;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
@@ -19,8 +17,8 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -33,9 +31,9 @@ public class JacksonConfig {
   public static final String HH_MM_SS = "HH:mm:ss";
 
   @Bean
+  @Order(-100)
   public Jackson2ObjectMapperBuilderCustomizer customizer() {
     return builder -> {
-//      ObjectMapper objectMapper = getObjectMapper();
 
       builder.simpleDateFormat("yyyy-MM-dd HH:mm:ss");
       builder.timeZone("GMT+8");
@@ -52,30 +50,7 @@ public class JacksonConfig {
         .addModule(getSimpleModule())
         .build();
       builder.configure(jsonMapper);
-//      builder.configure(objectMapper);
     };
-  }
-
-  private static ObjectMapper getObjectMapper() {
-    ObjectMapper objectMapper = new ObjectMapper();
-
-//    objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-    objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-    objectMapper.configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, true);
-    objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-    objectMapper.enable(MapperFeature.REQUIRE_SETTERS_FOR_GETTERS);
-    objectMapper.disable(MapperFeature.CAN_OVERRIDE_ACCESS_MODIFIERS);
-    objectMapper.disable(MapperFeature.OVERRIDE_PUBLIC_ACCESS_MODIFIERS);
-
-    SimpleModule module = getSimpleModule();
-    objectMapper.registerModule(module);
-
-    JavaTimeModule javaTimeModule = getJavaTimeModule();
-    objectMapper.registerModule(javaTimeModule);
-
-    objectMapper.setDateFormat(new SimpleDateFormat(YYYY_MM_DD_HH_MM_SS));
-    return objectMapper;
   }
 
   private static SimpleModule getSimpleModule() {
