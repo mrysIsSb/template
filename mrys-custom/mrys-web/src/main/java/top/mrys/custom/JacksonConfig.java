@@ -47,34 +47,20 @@ public class JacksonConfig {
         .configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, true)
         .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-        .addModule(getModule())
+        .addModule(getJavaTimeModule())
+        .addModule(getSimpleModule())
         .build();
       builder.configure(jsonMapper);
     };
   }
 
-  private static SimpleModule getModule() {
-    JavaTimeModule module = new JavaTimeModule();
-
-    //日期序列化
-    module.addSerializer(LocalDateTime.class,
-      new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(YYYY_MM_DD_HH_MM_SS)));
-    module.addSerializer(LocalDate.class,
-      new LocalDateSerializer(DateTimeFormatter.ofPattern(YYYY_MM_DD)));
-    module.addSerializer(LocalTime.class,
-      new LocalTimeSerializer(DateTimeFormatter.ofPattern(HH_MM_SS)));
-
-    //日期反序列化
-    module.addDeserializer(LocalDateTime.class,
-      new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(YYYY_MM_DD_HH_MM_SS)));
-    module.addDeserializer(LocalDate.class,
-      new LocalDateDeserializer(DateTimeFormatter.ofPattern(YYYY_MM_DD)));
-    module.addDeserializer(LocalTime.class,
-      new LocalTimeDeserializer(DateTimeFormatter.ofPattern(HH_MM_SS)));
+  private static SimpleModule getSimpleModule() {
+    SimpleModule module = new SimpleModule();
 
     module.addSerializer(Long.class, ToStringSerializer.instance);
     module.addSerializer(Long.TYPE, ToStringSerializer.instance);
     module.addSerializer(BigInteger.class, ToStringSerializer.instance);
+
 
     return module;
   }
