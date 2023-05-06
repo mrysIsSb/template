@@ -178,7 +178,7 @@ public class Result<T> {
   }
 
   public static <T> Result<T> fail(String template, Object... args) {
-    return fail(String.format(template, args));
+    return fail(StrUtil.format(template, args));
   }
   public static <T> Result<T> assert0(boolean b, String msg, T data) {
     if (b) {
