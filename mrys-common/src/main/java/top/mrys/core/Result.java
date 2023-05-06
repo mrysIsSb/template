@@ -176,6 +176,10 @@ public class Result<T> {
   public static <T> Result<T> fail(int code, String msg) {
     return newInstance(code, msg, null);
   }
+
+  public static <T> Result<T> fail(String template, Object... args) {
+    return fail(String.format(template, args));
+  }
   public static <T> Result<T> assert0(boolean b, String msg, T data) {
     if (b) {
       return success(data);
