@@ -1,5 +1,7 @@
 package top.mrys.core;
 
+import cn.hutool.core.util.StrUtil;
+
 import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.function.Consumer;
@@ -180,6 +182,7 @@ public class Result<T> {
   public static <T> Result<T> fail(String template, Object... args) {
     return fail(StrUtil.format(template, args));
   }
+
   public static <T> Result<T> assert0(boolean b, String msg, T data) {
     if (b) {
       return success(data);
