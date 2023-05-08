@@ -6,6 +6,7 @@ import top.mrys.custom.core.BaseUserInfo;
 import top.mrys.custom.core.UserInfo;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author mrys
@@ -42,6 +43,8 @@ public class SecurityProperties {
 
     private List<String> permissions;
 
+    private Map<String, Object> attrs;
+
     public UserInfo toUserInfo(){
       BaseUserInfo info = new BaseUserInfo();
       info.setUserId(this.getUserId());
@@ -50,6 +53,7 @@ public class SecurityProperties {
       info.setRoles(this.getRoles());
       info.setPermissions(this.getPermissions());
       info.setTenantId(this.getTenantId());
+      info.setAttrs(this.getAttrs());
       return info;
     }
   }
