@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.function.Function;
@@ -328,7 +329,8 @@ public class ExcelUtil<T> {
    * @return 结果
    */
   public void importTemplateExcel(HttpServletResponse response, String sheetName, String title) {
-    response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+    response.setContentType("application/octet-stream");
+    response.setHeader("Content-disposition", "attachment;filename=" + new String(Base64.getEncoder().encode(title.getBytes(StandardCharsets.UTF_8))) + ".xlsx");
     response.setCharacterEncoding("utf-8");
     this.init(null, sheetName, title, Excel.Type.IMPORT);
     exportExcel(response);
