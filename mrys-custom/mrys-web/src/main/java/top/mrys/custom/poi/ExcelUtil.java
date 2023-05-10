@@ -8,6 +8,7 @@ import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.core.util.URLUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -23,7 +24,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.function.Function;
@@ -300,7 +300,7 @@ public class ExcelUtil<T> {
    */
   public void exportExcel(HttpServletResponse response, List<T> list, String sheetName, String title) {
     response.setContentType("application/octet-stream");
-    response.setHeader("Content-disposition", "attachment;filename=" + new String(Base64.getEncoder().encode(title.getBytes(StandardCharsets.UTF_8))) + ".xlsx");
+    response.setHeader("Content-disposition", "attachment;filename=" + URLUtil.encode(title) + ".xlsx");
     response.setCharacterEncoding("utf-8");
     this.init(list, sheetName, title, Excel.Type.EXPORT);
     exportExcel(response);
@@ -331,7 +331,7 @@ public class ExcelUtil<T> {
    */
   public void importTemplateExcel(HttpServletResponse response, String sheetName, String title) {
     response.setContentType("application/octet-stream");
-    response.setHeader("Content-disposition", "attachment;filename=" + new String(Base64.getEncoder().encode(title.getBytes(StandardCharsets.UTF_8))) + ".xlsx");
+    response.setHeader("Content-disposition", "attachment;filename=" + URLUtil.encode(title) + ".xlsx");
     response.setCharacterEncoding("utf-8");
     this.init(null, sheetName, title, Excel.Type.IMPORT);
     exportExcel(response);
