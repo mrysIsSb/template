@@ -30,7 +30,6 @@ import java.util.function.Function;
  */
 @Aspect
 @Slf4j
-@Component
 public class DownLoadExcelAspect {
 
   @Pointcut("@annotation(downLoadExcel)")
