@@ -299,7 +299,8 @@ public class ExcelUtil<T> {
    * @throws IOException
    */
   public void exportExcel(HttpServletResponse response, List<T> list, String sheetName, String title) {
-    response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+    response.setContentType("application/octet-stream");
+    response.setHeader("Content-disposition", "attachment;filename=" + new String(Base64.getEncoder().encode(title.getBytes(StandardCharsets.UTF_8))) + ".xlsx");
     response.setCharacterEncoding("utf-8");
     this.init(list, sheetName, title, Excel.Type.EXPORT);
     exportExcel(response);
