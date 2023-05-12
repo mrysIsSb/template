@@ -183,7 +183,7 @@ public class WebMvcConfig implements Filter, WebMvcConfigurer {
           //返回json
           if (loginFunction instanceof LoginFunctionResult result) {
             return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
-              .body(JSONUtil.toJsonStr(result.getResult(authentication)));
+              .body(result.getResult(authentication));
           }
           //重定向
           if (loginFunction instanceof LoginFunctionRedirect redirect) {
