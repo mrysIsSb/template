@@ -18,6 +18,7 @@
     <module>mrys-security</module>
     <module>mrys-log</module>
     <module>mrys-api-doc</module>
+    <module>mrys-timer</module>
   </modules>
 
   <name>mrys-custom</name>
