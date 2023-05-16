@@ -43,14 +43,16 @@ public class TaskScheduler {
       public void run() {
         lock.writeLock().lock();
         try {
-          if (taskQueue.size() == 0) {
-            return;
-          }
-          TaskDetail detail = taskQueue.remove(0);
-          if (detail.getNextTime() <= System.currentTimeMillis()) {
-            executeTask(detail);
-          } else {
-            taskQueue.add(0, detail);
+          while (true){
+            if (taskQueue.size() == 0) {
+              return;
+            }
+            TaskDetail detail = taskQueue.remove(0);
+            if (detail.getNextTime() <= System.currentTimeMillis()) {
+              executeTask(detail);
+            } else {
+              taskQueue.add(0, detail);
+            }
           }
         } finally {
           lock.writeLock().unlock();
