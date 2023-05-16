@@ -35,18 +35,7 @@ public interface TaskDetail {
 
   TaskScheduler getScheduler();
 
-  /**
-   * 获取执行次数
-   */
-  default Integer getExecuteCount() {
-    return 0;
-  }
+  Long getExecTimes();
 
-  /**
-   * 获取执行了多少次
-   */
-  default Integer getExecuteNum() {
-    return 0;
-  }
-
+  Long getNeedTimes();
 }

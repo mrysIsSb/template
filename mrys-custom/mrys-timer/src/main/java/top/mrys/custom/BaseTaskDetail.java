@@ -24,6 +24,18 @@ public abstract class BaseTaskDetail implements TaskDetail {
   @Getter
   private String taskName;
 
+  @Setter
+  @Getter
+  private String taskParam;
+
+  @Setter
+  @Getter
+  private Long execTimes;
+
+  @Setter
+  @Getter
+  private Long needTimes;
+
   @Override
   public void setScheduler(TaskScheduler scheduler) {
     this.scheduler = scheduler;
