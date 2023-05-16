@@ -21,6 +21,8 @@ public interface TaskDetail {
    */
   Long getNextTime();
 
+  void setNextTime(Long nextTime);
+
   /**
    * 获取任务参数
    */
@@ -38,4 +40,6 @@ public interface TaskDetail {
   Long getExecTimes();
 
   Long getNeedTimes();
+
+  GenNextTime getGenNextTime();
 }

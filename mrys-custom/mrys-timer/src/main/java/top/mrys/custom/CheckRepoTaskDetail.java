@@ -12,7 +12,7 @@ public class CheckRepoTaskDetail extends BaseTaskDetail {
   public CheckRepoTaskDetail(long delay, TaskRepo taskRepo) {
     this.delay = delay;
     this.taskRepo = taskRepo;
-    this.nextTime = System.currentTimeMillis() + delay;
+    this.setNextTime(System.currentTimeMillis() + delay);
   }
 
   @Override
@@ -20,10 +20,6 @@ public class CheckRepoTaskDetail extends BaseTaskDetail {
     return 0L;
   }
 
-  @Override
-  public String getTaskParam() {
-    return null;
-  }
 
   @Override
   public Task getTask() {
@@ -34,5 +30,10 @@ public class CheckRepoTaskDetail extends BaseTaskDetail {
       ret.setNewTaskDetail(new CheckRepoTaskDetail(delay, taskRepo));
       return ret;
     };
+  }
+
+  @Override
+  public GenNextTime getGenNextTime() {
+    return () -> System.currentTimeMillis() + delay;
   }
 }

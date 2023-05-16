@@ -8,7 +8,7 @@ import java.util.Date;
 public class TestTaskDetail extends BaseTaskDetail {
 
   public TestTaskDetail(long nextTime) {
-    super.nextTime = nextTime;
+    setNextTime(nextTime);
   }
 
   @Override
@@ -32,6 +32,11 @@ public class TestTaskDetail extends BaseTaskDetail {
         return ret;
       }
     };
+  }
+
+  @Override
+  public GenNextTime getGenNextTime() {
+    return null;
   }
 
 }

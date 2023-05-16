@@ -10,7 +10,9 @@ public abstract class BaseTaskDetail implements TaskDetail {
 
   private TaskScheduler scheduler;
 
-  protected long nextTime;
+  @Setter
+  @Getter
+  private Long nextTime;
 
   @Setter
   @Getter
@@ -46,8 +48,4 @@ public abstract class BaseTaskDetail implements TaskDetail {
     return scheduler;
   }
 
-  @Override
-  public Long getNextTime() {
-    return nextTime;
-  }
 }
