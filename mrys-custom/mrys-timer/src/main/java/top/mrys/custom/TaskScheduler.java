@@ -47,8 +47,9 @@ public class TaskScheduler {
             if (taskQueue.size() == 0) {
               return;
             }
-            TaskDetail detail = taskQueue.remove(0);
+            TaskDetail detail = taskQueue.get(0);
             if (detail.getNextTime() <= System.currentTimeMillis()) {
+              removeTask(detail);
               executeTask(detail);
             } else {
               taskQueue.add(0, detail);
@@ -66,6 +67,7 @@ public class TaskScheduler {
   public void stop() {
     timer.cancel();
     taskQueue.forEach(taskRepo::addTask);
+    taskQueue.clear();
   }
 
   //添加任务

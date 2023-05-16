@@ -12,8 +12,9 @@ public interface TaskRepo {
   //add
   void addTask(TaskDetail taskDetail);
 
+  //remove
   void removeTask(TaskDetail taskParam);
 
-  //取出快要执行的任务
+  //取出快要执行的任务不要删除
   List<TaskDetail> takeWaitingTask();
 }
