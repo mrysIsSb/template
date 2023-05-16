@@ -29,7 +29,7 @@ public class CheckRepoTaskDetail extends BaseTaskDetail {
   public Task getTask() {
     return param -> {
       TaskScheduler scheduler = param.getScheduler();
-      taskRepo.getWaitingTask().forEach(scheduler::addTask);
+      taskRepo.takeWaitingTask().forEach(scheduler::addTask);
       TaskRet ret = new TaskRet();
       ret.setNewTaskDetail(new CheckRepoTaskDetail(delay, taskRepo));
       return ret;

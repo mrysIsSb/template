@@ -12,6 +12,10 @@ public interface TaskDetail {
    */
   Long getTaskId();
 
+  String getTaskCode();
+
+  String getTaskName();
+
   /**
    * 获取下一次执行时间ms
    */

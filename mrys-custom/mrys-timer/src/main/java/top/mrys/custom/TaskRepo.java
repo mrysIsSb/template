@@ -14,6 +14,6 @@ public interface TaskRepo {
 
   void removeTask(TaskDetail taskParam);
 
-  //获取快要执行的任务
-  List<TaskDetail> getWaitingTask();
+  //取出快要执行的任务
+  List<TaskDetail> takeWaitingTask();
 }

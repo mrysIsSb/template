@@ -18,8 +18,8 @@ public class TestTaskRepo implements TaskRepo{
   }
 
   @Override
-  public List<TaskDetail> getWaitingTask() {
-    System.out.println("getWaitingTask");
+  public List<TaskDetail> takeWaitingTask() {
     return Collections.emptyList();
   }
+
 }
