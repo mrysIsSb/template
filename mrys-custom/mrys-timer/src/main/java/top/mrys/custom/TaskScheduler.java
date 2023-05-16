@@ -44,7 +44,6 @@ public class TaskScheduler {
         lock.writeLock().lock();
         try {
           if (taskQueue.size() == 0) {
-            System.out.println("没有任务");
             return;
           }
           TaskDetail detail = taskQueue.remove(0);
@@ -58,6 +57,8 @@ public class TaskScheduler {
         }
       }
     }, 0, 500);
+
+    Runtime.getRuntime().addShutdownHook(new Thread(this::stop));
   }
 
   public void stop() {
@@ -90,9 +91,9 @@ public class TaskScheduler {
   }
 
   //删除任务
-  public void removeTask(TaskDetail taskParam) {
-    taskRepo.removeTask(taskParam);
-    taskQueue.removeIf(taskDetail -> taskDetail.getTaskId().equals(taskParam.getTaskId()));
+  public void removeTask(TaskDetail detail) {
+    taskRepo.removeTask(detail);
+    taskQueue.removeIf(taskDetail -> taskDetail.getTaskId().equals(detail.getTaskId()) || taskDetail.getTaskCode().equals(detail.getTaskCode()));
   }
 
   //修改任务
