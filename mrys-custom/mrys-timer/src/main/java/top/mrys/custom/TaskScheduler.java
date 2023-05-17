@@ -1,5 +1,7 @@
 package top.mrys.custom;
 
+import lombok.Getter;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Timer;
@@ -14,6 +16,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class TaskScheduler {
 
   //任务仓库
+  @Getter
   private final TaskRepo taskRepo;
 
   //任务执行器
@@ -33,6 +36,8 @@ public class TaskScheduler {
 
   private Timer timer;
 
+  private Timer timer2;
+
   public void start() {
 
     addTask(new CheckRepoTaskDetail(30 * 1000, this.taskRepo));
@@ -43,13 +48,12 @@ public class TaskScheduler {
       public void run() {
         lock.writeLock().lock();
         try {
-          while (true){
+          while (true) {
             if (taskQueue.size() == 0) {
               return;
             }
-            TaskDetail detail = taskQueue.get(0);
+            TaskDetail detail = taskQueue.remove(0);
             if (detail.getNextTime() <= System.currentTimeMillis()) {
-              removeTask(detail);
               executeTask(detail);
             } else {
               taskQueue.add(0, detail);
@@ -61,7 +65,29 @@ public class TaskScheduler {
       }
     }, 0, 500);
 
-    Runtime.getRuntime().addShutdownHook(new Thread(this::stop));
+    timer2 = new Timer();
+    timer2.schedule(new TimerTask() {
+      @Override
+      public void run() {
+        lock.writeLock().lock();
+        try {
+          taskRepo.takeWaitingTask().forEach(t -> {
+            Long nextTime = t.getNextTime();
+            int index = 0;
+            for (int i = taskQueue.size() - 1; i >= 0; i--) {
+              TaskDetail task = taskQueue.get(i);
+              if (task.getNextTime() < nextTime) {
+                index = i + 1;
+                break;
+              }
+            }
+            taskQueue.add(index, t);
+          });
+        } finally {
+          lock.writeLock().unlock();
+        }
+      }
+    }, 0, 30 * 1000);
   }
 
   public void stop() {
@@ -73,25 +99,7 @@ public class TaskScheduler {
   //添加任务
   public void addTask(TaskDetail taskDetail) {
     Long nextTime = taskDetail.getNextTime();
-    //大于1分钟的任务
-    if (nextTime > System.currentTimeMillis() + 60 * 1000) {
-      taskRepo.addTask(taskDetail);
-    } else {
-      lock.writeLock().lock();
-      try {
-        int index = 0;
-        for (int i = taskQueue.size() - 1; i >= 0; i--) {
-          TaskDetail task = taskQueue.get(i);
-          if (task.getNextTime() < nextTime) {
-            index = i + 1;
-            break;
-          }
-        }
-        taskQueue.add(index, taskDetail);
-      } finally {
-        lock.writeLock().unlock();
-      }
-    }
+    taskRepo.addTask(taskDetail);
   }
 
   //删除任务

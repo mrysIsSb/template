@@ -28,6 +28,7 @@ public class SimpleTaskExecutor implements TaskExecutor {
     executor.execute(() -> {
       Task task = taskProxy.apply(taskDetail.getTask());
       TaskRet ret = task.execute(taskDetail);
+      //执行成功
       if (ret == null) {
         return;
       }
