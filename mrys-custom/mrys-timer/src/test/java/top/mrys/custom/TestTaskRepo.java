@@ -21,4 +21,9 @@ public class TestTaskRepo implements TaskRepo{
   public List<TaskDetail> takeWaitingTask() {
     return Collections.emptyList();
   }
+
+  @Override
+  public void init() {
+
+  }
 }

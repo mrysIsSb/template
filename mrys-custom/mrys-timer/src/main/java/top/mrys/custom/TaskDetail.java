@@ -28,6 +28,9 @@ public interface TaskDetail {
    */
   String getTaskParam();
 
+  Integer getTaskStatus();
+  void setTaskStatus(Integer taskStatus);
+
   /**
    * 获取任务
    */
@@ -38,6 +41,7 @@ public interface TaskDetail {
   TaskScheduler getScheduler();
 
   Long getExecTimes();
+  void setExecTimes(Long execTimes);
 
   Long getNeedTimes();
 

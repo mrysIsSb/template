@@ -40,8 +40,6 @@ public class TaskScheduler {
 
   public void start() {
 
-    addTask(new CheckRepoTaskDetail(30 * 1000, this.taskRepo));
-
     timer = new Timer();
     timer.schedule(new TimerTask() {
       @Override
@@ -92,13 +90,41 @@ public class TaskScheduler {
 
   public void stop() {
     timer.cancel();
-    taskQueue.forEach(taskRepo::addTask);
+    timer2.cancel();
     taskQueue.clear();
   }
 
   //添加任务
   public void addTask(TaskDetail taskDetail) {
     Long nextTime = taskDetail.getNextTime();
+    Integer taskStatus = taskDetail.getTaskStatus();
+    if (taskStatus == null) {
+      taskDetail.setTaskStatus(0);
+    }
+    if (taskStatus == 3) {
+      taskRepo.addTask(taskDetail);
+      return;
+    }
+    //大于1分钟的任务
+    if (nextTime > System.currentTimeMillis() + 60 * 1000) {
+      taskDetail.setTaskStatus(0);
+    } else {
+      taskDetail.setTaskStatus(1);
+      lock.writeLock().lock();
+      try {
+        int index = 0;
+        for (int i = taskQueue.size() - 1; i >= 0; i--) {
+          TaskDetail task = taskQueue.get(i);
+          if (task.getNextTime() < nextTime) {
+            index = i + 1;
+            break;
+          }
+        }
+        taskQueue.add(index, taskDetail);
+      } finally {
+        lock.writeLock().unlock();
+      }
+    }
     taskRepo.addTask(taskDetail);
   }
 

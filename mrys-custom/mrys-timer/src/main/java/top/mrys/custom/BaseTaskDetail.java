@@ -30,6 +30,10 @@ public abstract class BaseTaskDetail implements TaskDetail {
   @Getter
   private String taskParam;
 
+  @Getter
+  @Setter
+  private Integer taskStatus;
+
   @Setter
   @Getter
   private Long execTimes;

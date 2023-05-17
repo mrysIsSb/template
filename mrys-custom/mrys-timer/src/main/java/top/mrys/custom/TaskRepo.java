@@ -17,4 +17,7 @@ public interface TaskRepo {
 
   //取出快要执行的任务不要删除
   List<TaskDetail> takeWaitingTask();
+
+  //初始化
+  void init();
 }
