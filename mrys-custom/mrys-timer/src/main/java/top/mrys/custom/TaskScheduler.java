@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
@@ -38,60 +39,67 @@ public class TaskScheduler {
 
   private Timer timer2;
 
+  @Getter
+  private AtomicBoolean started = new AtomicBoolean(false);
+
   public void start() {
-
-    timer = new Timer();
-    timer.schedule(new TimerTask() {
-      @Override
-      public void run() {
-        lock.writeLock().lock();
-        try {
-          while (true) {
-            if (taskQueue.size() == 0) {
-              return;
-            }
-            TaskDetail detail = taskQueue.remove(0);
-            if (detail.getNextTime() <= System.currentTimeMillis()) {
-              executeTask(detail);
-            } else {
-              taskQueue.add(0, detail);
-            }
-          }
-        } finally {
-          lock.writeLock().unlock();
-        }
-      }
-    }, 0, 500);
-
-    timer2 = new Timer();
-    timer2.schedule(new TimerTask() {
-      @Override
-      public void run() {
-        lock.writeLock().lock();
-        try {
-          taskRepo.takeWaitingTask().forEach(t -> {
-            Long nextTime = t.getNextTime();
-            int index = 0;
-            for (int i = taskQueue.size() - 1; i >= 0; i--) {
-              TaskDetail task = taskQueue.get(i);
-              if (task.getNextTime() < nextTime) {
-                index = i + 1;
-                break;
+    if (started.compareAndSet(false, true)) {
+      taskRepo.init();
+      timer = new Timer();
+      timer.schedule(new TimerTask() {
+        @Override
+        public void run() {
+          lock.writeLock().lock();
+          try {
+            while (true) {
+              if (taskQueue.size() == 0) {
+                return;
+              }
+              TaskDetail detail = taskQueue.remove(0);
+              if (detail.getNextTime() <= System.currentTimeMillis()) {
+                executeTask(detail);
+              } else {
+                taskQueue.add(0, detail);
               }
             }
-            taskQueue.add(index, t);
-          });
-        } finally {
-          lock.writeLock().unlock();
+          } finally {
+            lock.writeLock().unlock();
+          }
         }
-      }
-    }, 0, 30 * 1000);
+      }, 0, 500);
+
+      timer2 = new Timer();
+      timer2.schedule(new TimerTask() {
+        @Override
+        public void run() {
+          lock.writeLock().lock();
+          try {
+            taskRepo.takeWaitingTask().forEach(t -> {
+              Long nextTime = t.getNextTime();
+              int index = 0;
+              for (int i = taskQueue.size() - 1; i >= 0; i--) {
+                TaskDetail task = taskQueue.get(i);
+                if (task.getNextTime() < nextTime) {
+                  index = i + 1;
+                  break;
+                }
+              }
+              taskQueue.add(index, t);
+            });
+          } finally {
+            lock.writeLock().unlock();
+          }
+        }
+      }, 0, 30 * 1000);
+    }
   }
 
   public void stop() {
-    timer.cancel();
-    timer2.cancel();
-    taskQueue.clear();
+    if (started.compareAndSet(true, false)) {
+      timer.cancel();
+      timer2.cancel();
+      taskQueue.clear();
+    }
   }
 
   //添加任务
