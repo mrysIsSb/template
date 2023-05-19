@@ -23,10 +23,10 @@ public class CustomSpringApplicationRunListener implements SpringApplicationRunL
 
   @Override
   public void ready(ConfigurableApplicationContext context, Duration timeTaken) {
-    setSecurityCOntext(context);
+    setSecurityContext(context);
   }
 
-  private static void setSecurityCOntext(ConfigurableApplicationContext context) {
+  private static void setSecurityContext(ConfigurableApplicationContext context) {
     log.info("spring boot started set security context:{}", context.getClass());
     try {
       if (context instanceof ConfigurableWebApplicationContext) {

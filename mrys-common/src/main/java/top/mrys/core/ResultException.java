@@ -11,6 +11,7 @@ public class ResultException extends RuntimeException {
 
   public ResultException(String msg) {
     super(msg);
+    this.code = -1;
     this.msg = msg;
   }
   public ResultException(int code, String msg) {
