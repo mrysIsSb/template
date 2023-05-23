@@ -35,6 +35,9 @@ public class SimpleTaskExecutor implements TaskExecutor {
       TaskRet ret = task.execute(taskDetail);
       //执行成功
       if (ret == null) {
+        //执行结束
+        taskDetail.setTaskStatus(3);
+        repo.addTask(taskDetail);
         return;
       }
       Optional<TaskDetail> newTaskDetail = ret.getNewTaskDetail();
