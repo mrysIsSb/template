@@ -4,13 +4,16 @@ import cn.hutool.core.util.StrUtil;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.servlet.HandlerExceptionResolver;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import top.mrys.core.ResultException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author mrys
@@ -30,13 +33,16 @@ public class WebConfig implements WebMvcConfigurer {
         throw new ResultException(EnumHttpExceptionCode.PARAM_ERROR.getCode(),
           StrUtil.format("{}:({})", EnumHttpExceptionCode.PARAM_ERROR.getMsg(), ex1.getMessage()));
       }
-      exceptionHandlers.ifPresent(handlers -> {
-        for (CustomExceptionHandler handler1 : handlers) {
-          if (handler1.handler(request, response, handler, ex)) {
-            return;
-          }
-        }
-      });
+      AtomicBoolean handled = new AtomicBoolean(false);
+      exceptionHandlers.flatMap(handlers ->
+        handlers.stream().map(handler1 ->
+            handler1.handler(request, response, handler, ex))
+          .filter(b -> b).findFirst()).ifPresent(handled::set);
+      if (handled.get()) {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setStatus(HttpStatusCode.valueOf(response.getStatus()));
+        return modelAndView;
+      }
 
       if (ex instanceof ResultException ex1) {
         log.warn(ex1.getMessage());
