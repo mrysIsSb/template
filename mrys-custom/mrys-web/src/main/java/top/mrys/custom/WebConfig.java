@@ -34,10 +34,10 @@ public class WebConfig implements WebMvcConfigurer {
           StrUtil.format("{}:({})", EnumHttpExceptionCode.PARAM_ERROR.getMsg(), ex1.getMessage()));
       }
       AtomicBoolean handled = new AtomicBoolean(false);
-      exceptionHandlers.flatMap(handlers ->
+      exceptionHandlers.ifPresent(handlers ->
         handlers.stream().map(handler1 ->
             handler1.handler(request, response, handler, ex))
-          .filter(b -> b).findFirst()).ifPresent(handled::set);
+          .filter(b -> b).findFirst().ifPresent(handled::set));
       if (handled.get()) {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setStatus(HttpStatusCode.valueOf(response.getStatus()));
