@@ -76,7 +76,7 @@ public class DownLoadExcelAspect {
   }
 
   private void export(DownLoadExcel downLoadExcel, ServletRequestAttributes requestAttributes,
-      List list) {
+                      List list) {
     ExcelUtil util = new ExcelUtil(downLoadExcel.clazz());
     util.dateFormat = "yyyy-MM-dd HH:mm:ss";
     util.fieldFunctions.add((Function<Field, ExcelFieldDetail>) field -> {
@@ -96,6 +96,6 @@ public class DownLoadExcelAspect {
       return detail;
     });
     util.exportExcel(requestAttributes.getResponse(), list, downLoadExcel.value(),
-        downLoadExcel.value());
+      downLoadExcel.value());
   }
 }
