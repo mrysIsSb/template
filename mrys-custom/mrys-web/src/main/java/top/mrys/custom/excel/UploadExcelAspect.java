@@ -1,6 +1,7 @@
 package top.mrys.custom.excel;
 
 import cn.hutool.core.util.StrUtil;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.Part;
 import lombok.SneakyThrows;
@@ -11,10 +12,14 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import top.mrys.custom.poi.ExcelFieldDetail;
 import top.mrys.custom.poi.ExcelUtil;
 
 import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * @author mrys
@@ -42,7 +47,7 @@ public class UploadExcelAspect {
     ExcelUtil util = new ExcelUtil(clazz);
     if (request.getParameter("template") != null) {
       //下载模板
-      util.exportExcel(requestAttributes.getResponse());
+      export(uploadExcel, requestAttributes);
       return null;
     }
 
@@ -57,6 +62,28 @@ public class UploadExcelAspect {
       return joinPoint.proceed(args);
     }
     return joinPoint.proceed(args);
+  }
+
+  private void export(UploadExcel uploadExcel, ServletRequestAttributes requestAttributes) {
+    ExcelUtil util = new ExcelUtil(uploadExcel.clazz());
+    util.dateFormat = "yyyy-MM-dd HH:mm:ss";
+    util.fieldFunctions.add((Function<Field, ExcelFieldDetail>) field -> {
+      if (!field.isAnnotationPresent(Schema.class)) {
+        return null;
+      }
+      Schema schema = field.getAnnotation(Schema.class);
+      ExcelFieldDetail detail = new ExcelFieldDetail();
+      field.setAccessible(true);
+      detail.setField(field);
+      detail.setFieldName(schema.description());
+      detail.setPrompt(schema.description());
+      ExcelValueMapper excelValueMapper = field.getAnnotation(ExcelValueMapper.class);
+      if (excelValueMapper != null) {
+        detail.setHandler(excelValueMapper.value());
+      }
+      return detail;
+    });
+    util.exportExcel(requestAttributes.getResponse(), Collections.emptyList(),"sheet1","模板");
   }
 
 }
