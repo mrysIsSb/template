@@ -1,6 +1,7 @@
 package top.mrys.custom;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  *
  * @author mrys
  */
+@Slf4j
 public class TaskScheduler {
 
   //任务仓库
@@ -60,8 +62,11 @@ public class TaskScheduler {
                 executeTask(detail);
               } else {
                 taskQueue.add(0, detail);
+                return;
               }
             }
+          } catch (Exception e) {
+            log.error(e.getMessage(), e);
           } finally {
             lock.writeLock().unlock();
           }
@@ -72,9 +77,10 @@ public class TaskScheduler {
       timer2.schedule(new TimerTask() {
         @Override
         public void run() {
-          lock.writeLock().lock();
           try {
-            taskRepo.takeWaitingTask().forEach(t -> {
+            List<TaskDetail> taskDetails = taskRepo.takeWaitingTask();
+            lock.writeLock().lock();
+            taskDetails.forEach(t -> {
               Long nextTime = t.getNextTime();
               int index = 0;
               for (int i = taskQueue.size() - 1; i >= 0; i--) {
@@ -86,6 +92,8 @@ public class TaskScheduler {
               }
               taskQueue.add(index, t);
             });
+          } catch (Exception e) {
+            log.error(e.getMessage(), e);
           } finally {
             lock.writeLock().unlock();
           }
