@@ -45,7 +45,7 @@ public class WebConfig implements WebMvcConfigurer {
       }
 
       if (ex instanceof ResultException ex1) {
-        log.warn(ex1.getMessage());
+        log.warn("[{}]{}",request.getRequestURI(),ex1.getMessage());
         throw ex1;
       }
       log.error(ex.getMessage(), ex);
