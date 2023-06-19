@@ -22,7 +22,7 @@ public class ServletExceptionHandler implements ExceptionHandler<ServletExceptio
   @Override
   @SneakyThrows
   public void handle(ServerExchange serverExchange, ServletException e) {
-    log.error(e.getMessage());
+    log.error("url:{},msg:{}", serverExchange.getRequest().getPath(), e.getMessage());
     throw e.getRootCause();
   }
 
