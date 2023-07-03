@@ -141,6 +141,10 @@ public class DefaultSchemaTypeHandler implements SchemaTypeHandler {
       .filter(field -> !Modifier.isFinal(field.getModifiers()))
       .filter(field -> !AnnotatedElementUtils.hasAnnotation(field, JsonIgnore.class))
       .filter(field -> {
+        io.swagger.v3.oas.annotations.media.Schema schema = field.getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
+        return schema != null && !schema.hidden();
+      })
+      .filter(field -> {
         Set<Class> set1 = threadLocal.get();
         return !set1.contains(field.getType());
       })
