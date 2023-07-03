@@ -180,7 +180,11 @@ public class DefaultSchemaTypeHandler implements SchemaTypeHandler {
           return;
         }
         //不存在
-        String desc = Optional.ofNullable(AnnotatedElementUtils.findMergedAnnotation(method, io.swagger.v3.oas.annotations.media.Schema.class))
+        io.swagger.v3.oas.annotations.media.Schema annotation = AnnotatedElementUtils.findMergedAnnotation(method, io.swagger.v3.oas.annotations.media.Schema.class);
+        if (annotation == null || annotation.hidden()) {
+          return;
+        }
+        String desc = Optional.of(annotation)
           .map(io.swagger.v3.oas.annotations.media.Schema::description)
           .orElse("");
         Type type = method.getReturnType();
