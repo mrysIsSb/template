@@ -47,11 +47,11 @@ public class UploadExcelAspect {
     ExcelUtil util = new ExcelUtil(clazz);
     if (request.getParameter("template") != null) {
       //下载模板
-      upload(uploadExcel, requestAttributes);
+      template(uploadExcel, requestAttributes);
       return null;
     }
 
-    if (request.getParameter("upload") == null) {
+    if (request.getParameter("upload") != null) {
 
       Part part = request.getPart(StrUtil.blankToDefault(uploadExcel.value(), "file"));
 
@@ -64,7 +64,7 @@ public class UploadExcelAspect {
     return joinPoint.proceed(args);
   }
 
-  private void upload(UploadExcel uploadExcel, ServletRequestAttributes requestAttributes) {
+  private void template(UploadExcel uploadExcel, ServletRequestAttributes requestAttributes) {
     ExcelUtil util = new ExcelUtil(uploadExcel.clazz());
     util.dateFormat = "yyyy-MM-dd HH:mm:ss";
     util.fieldFunctions.add((Function<Field, ExcelFieldDetail>) field -> {
