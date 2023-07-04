@@ -157,7 +157,7 @@ public class ExcelUtil<T> {
    * 对excel表单默认第一个索引名转换成list
    *
    * @param is       输入流
-   * @param titleNum 标题占用行数
+   * @param titleNum 标题行下标
    * @return 转换后集合
    */
   public List<T> importExcel(InputStream is, int titleNum) throws Exception {
@@ -168,7 +168,7 @@ public class ExcelUtil<T> {
    * 对excel表单指定表格索引名转换成list
    *
    * @param sheetName 表格索引名
-   * @param titleNum  标题占用行数
+   * @param titleNum  标题下标
    * @param is        输入流
    * @return 转换后集合
    */
@@ -284,8 +284,8 @@ public class ExcelUtil<T> {
    * @return 结果
    * @throws IOException
    */
-  public void exportExcel(HttpServletResponse response, List<T> list, String sheetName) {
-    exportExcel(response, list, sheetName, "");
+  public void exportExcel(HttpServletResponse response, List<T> list, String sheetName, String fileName) {
+    exportExcel(response, list, sheetName, "",fileName);
   }
 
   /**
@@ -298,9 +298,9 @@ public class ExcelUtil<T> {
    * @return 结果
    * @throws IOException
    */
-  public void exportExcel(HttpServletResponse response, List<T> list, String sheetName, String title) {
+  public void exportExcel(HttpServletResponse response, List<T> list, String sheetName, String title,String fileName) {
     response.setContentType("application/octet-stream");
-    response.setHeader("Content-disposition", "attachment;filename=" + URLUtil.encode(title) + ".xlsx");
+    response.setHeader("Content-disposition", "attachment;filename=" + URLUtil.encode(fileName) + ".xlsx");
     response.setCharacterEncoding("utf-8");
     this.init(list, sheetName, title, Excel.Type.EXPORT);
     exportExcel(response);

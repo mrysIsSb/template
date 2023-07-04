@@ -16,5 +16,8 @@ public @interface UploadExcel {
    * 上传的文件字段
    */
   String value() default "file";
+
   Class<?> clazz();
+
+  String fileName() default "数据";
 }

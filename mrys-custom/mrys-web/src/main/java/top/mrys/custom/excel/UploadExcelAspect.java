@@ -56,7 +56,7 @@ public class UploadExcelAspect {
       Part part = request.getPart(StrUtil.blankToDefault(uploadExcel.value(), "file"));
 
       InputStream stream = part.getInputStream();
-      List excel = util.importExcel(stream, 1);
+      List excel = util.importExcel(stream, 0);
       args[0] = excel;
 
       return joinPoint.proceed(args);
@@ -86,7 +86,7 @@ public class UploadExcelAspect {
       }
       return detail;
     });
-    util.exportExcel(requestAttributes.getResponse(), Collections.emptyList(),"sheet1");
+    util.exportExcel(requestAttributes.getResponse(), Collections.emptyList(),"sheet1",uploadExcel.fileName());
   }
 
 }
