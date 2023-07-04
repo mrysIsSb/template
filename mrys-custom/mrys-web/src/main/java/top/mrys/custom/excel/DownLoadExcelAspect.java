@@ -84,6 +84,9 @@ public class DownLoadExcelAspect {
         return null;
       }
       Schema schema = field.getAnnotation(Schema.class);
+      if (schema.hidden()) {
+        return null;
+      }
       ExcelFieldDetail detail = new ExcelFieldDetail();
       field.setAccessible(true);
       detail.setField(field);
