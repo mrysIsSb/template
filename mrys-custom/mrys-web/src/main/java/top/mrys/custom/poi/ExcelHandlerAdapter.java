@@ -14,4 +14,12 @@ public interface ExcelHandlerAdapter {
    * @return 处理后的值
    */
   Object format(Object value, ExcelFieldDetail detail);
+
+  class DefExcelHandlerAdapter implements ExcelHandlerAdapter{
+
+    @Override
+    public Object format(Object value, ExcelFieldDetail detail) {
+      return null;
+    }
+  }
 }

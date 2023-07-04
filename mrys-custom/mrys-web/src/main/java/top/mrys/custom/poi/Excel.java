@@ -107,7 +107,7 @@ public @interface Excel {
   /**
    * 自定义数据处理器
    */
-  Class<? extends ExcelHandlerAdapter> handler() default ExcelHandlerAdapter.class;
+  Class<? extends ExcelHandlerAdapter> handler() default ExcelHandlerAdapter.DefExcelHandlerAdapter.class;
 
   /**
    * 自定义数据处理器参数
