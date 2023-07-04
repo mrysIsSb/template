@@ -19,7 +19,7 @@ public interface ExcelHandlerAdapter {
 
     @Override
     public Object format(Object value, ExcelFieldDetail detail) {
-      return null;
+      return value;
     }
   }
 }
