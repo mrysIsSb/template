@@ -85,7 +85,7 @@ public class WebMvcConfig implements Filter, WebMvcConfigurer {
       try {
         chain.doFilter((ServletRequest) exchange.getRequest().getNativeRequest(), (ServletResponse) exchange.getResponse().getNativeResponse());
       } catch (Throwable e) {
-        if (e instanceof ResultException re){
+        if (e instanceof ResultException re) {
           log.warn(e.getMessage());
         }
         if (log.isDebugEnabled()) {
@@ -198,6 +198,7 @@ public class WebMvcConfig implements Filter, WebMvcConfigurer {
       }
     );
   }
+
   /**
    * 验证是否有权限
    */

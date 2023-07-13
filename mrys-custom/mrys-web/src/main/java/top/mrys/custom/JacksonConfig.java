@@ -50,6 +50,7 @@ public class JacksonConfig {
         .addModule(getJavaTimeModule())
         .addModule(getSimpleModule())
         .build();
+      builder.modules(getJavaTimeModule(), getSimpleModule());
       builder.configure(jsonMapper);
     };
   }
