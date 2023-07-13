@@ -39,23 +39,36 @@ public class JacksonConfig {
       builder.simpleDateFormat("yyyy-MM-dd HH:mm:ss");
       builder.timeZone("GMT+8");
 
-      JsonMapper jsonMapper = JsonMapper.builder()
-        .enable(MapperFeature.REQUIRE_SETTERS_FOR_GETTERS)
-        .disable(MapperFeature.CAN_OVERRIDE_ACCESS_MODIFIERS)
-        .disable(MapperFeature.OVERRIDE_PUBLIC_ACCESS_MODIFIERS)
-        .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-        .configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, true)
-        .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
-        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-        .addModule(getJavaTimeModule())
-        .addModule(getSimpleModule())
-        .build();
-      builder.modules(getJavaTimeModule(), getSimpleModule());
-      builder.configure(jsonMapper);
+      builder.featuresToEnable(
+        MapperFeature.REQUIRE_SETTERS_FOR_GETTERS,
+        DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE
+      );
+      builder.featuresToDisable(
+        MapperFeature.CAN_OVERRIDE_ACCESS_MODIFIERS,
+        MapperFeature.OVERRIDE_PUBLIC_ACCESS_MODIFIERS,
+        SerializationFeature.WRITE_DATES_AS_TIMESTAMPS,
+        SerializationFeature.FAIL_ON_EMPTY_BEANS,
+        DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES
+      );
     };
   }
 
-  private static SimpleModule getSimpleModule() {
+  public JsonMapper createJsonMapper() {
+    return JsonMapper.builder()
+      .enable(MapperFeature.REQUIRE_SETTERS_FOR_GETTERS)
+      .disable(MapperFeature.CAN_OVERRIDE_ACCESS_MODIFIERS)
+      .disable(MapperFeature.OVERRIDE_PUBLIC_ACCESS_MODIFIERS)
+      .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+      .configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, true)
+      .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
+      .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+      .addModule(getJavaTimeModule())
+      .addModule(getSimpleModule())
+      .build();
+  }
+
+  @Bean
+  public SimpleModule getSimpleModule() {
     SimpleModule module = new SimpleModule();
 
     module.addSerializer(Long.class, ToStringSerializer.instance);
@@ -66,7 +79,8 @@ public class JacksonConfig {
     return module;
   }
 
-  private static JavaTimeModule getJavaTimeModule() {
+  @Bean
+  public JavaTimeModule getJavaTimeModule() {
     JavaTimeModule javaTimeModule = new JavaTimeModule();
 
     //日期序列化
