@@ -18,7 +18,7 @@ public class TestTaskRepo implements TaskRepo{
   }
 
   @Override
-  public List<TaskDetail> takeWaitingTask() {
+  public List<TaskDetail> takeWaitingTask(Long execTime) {
     return Collections.emptyList();
   }
 

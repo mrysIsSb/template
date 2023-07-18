@@ -23,14 +23,11 @@ public class TestTaskDetail extends BaseTaskDetail {
 
   @Override
   public Task getTask() {
-    return new Task() {
-      @Override
-      public TaskRet execute(TaskDetail param) {
-        System.out.println(new Date()+"执行任务--");
-        TaskRet ret = new TaskRet();
-        ret.setNewTaskDetail(new TestTaskDetail(System.currentTimeMillis()+1000*10));
-        return ret;
-      }
+    return param -> {
+      System.out.println(new Date()+"执行任务--");
+      TaskRet ret = new TaskRet();
+      ret.setNewTaskDetail(new TestTaskDetail(System.currentTimeMillis()+1000*10));
+      return ret;
     };
   }
 

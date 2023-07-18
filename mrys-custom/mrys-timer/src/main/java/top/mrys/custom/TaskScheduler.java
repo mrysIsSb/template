@@ -3,7 +3,6 @@ package top.mrys.custom;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -24,22 +23,15 @@ public class TaskScheduler {
 
   //任务执行器
   private final TaskExecutor taskExecutor;
-
-  //任务队列
-  private final List<TaskDetail> taskQueue;
-
   //lock
-  private ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+  private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
   public TaskScheduler(TaskRepo taskRepo, TaskExecutor taskExecutor) {
     this.taskRepo = taskRepo;
     this.taskExecutor = taskExecutor;
-    this.taskQueue = new LinkedList<>();
   }
 
   private Timer timer;
-
-  private Timer timer2;
 
   @Getter
   private AtomicBoolean started = new AtomicBoolean(false);
@@ -54,15 +46,14 @@ public class TaskScheduler {
           lock.writeLock().lock();
           try {
             while (true) {
-              if (taskQueue.size() == 0) {
+              List<TaskDetail> details = taskRepo.takeWaitingTask(System.currentTimeMillis());
+
+              if (details == null || details.size() == 0) {
                 return;
               }
-              TaskDetail detail = taskQueue.remove(0);
-              if (detail.getNextTime() <= System.currentTimeMillis()) {
+
+              for (TaskDetail detail : details) {
                 executeTask(detail);
-              } else {
-                taskQueue.add(0, detail);
-                return;
               }
             }
           } catch (Exception e) {
@@ -72,97 +63,26 @@ public class TaskScheduler {
           }
         }
       }, 0, 500);
-
-      timer2 = new Timer();
-      timer2.schedule(new TimerTask() {
-        @Override
-        public void run() {
-          try {
-            List<TaskDetail> taskDetails = taskRepo.takeWaitingTask();
-            lock.writeLock().lock();
-            taskDetails.forEach(t -> {
-              Long nextTime = t.getNextTime();
-              int index = 0;
-              for (int i = taskQueue.size() - 1; i >= 0; i--) {
-                TaskDetail task = taskQueue.get(i);
-                if (task.getNextTime() < nextTime) {
-                  index = i + 1;
-                  break;
-                }
-              }
-              taskQueue.add(index, t);
-            });
-          } catch (Exception e) {
-            log.error(e.getMessage(), e);
-          } finally {
-            lock.writeLock().unlock();
-          }
-        }
-      }, 0, 30 * 1000);
     }
   }
 
+  /**
+   * 停止
+   */
   public void stop() {
     if (started.compareAndSet(true, false)) {
       timer.cancel();
-      timer2.cancel();
-      taskQueue.clear();
     }
   }
 
-  //添加任务
-  public void addTask(TaskDetail taskDetail) {
-    Long nextTime = taskDetail.getNextTime();
-    Integer taskStatus = taskDetail.getTaskStatus();
-    if (taskStatus == null) {
-      taskDetail.setTaskStatus(0);
-    }
-    if (taskStatus == 3) {
-      taskRepo.addTask(taskDetail);
-      return;
-    }
-    //大于1分钟的任务
-    if (nextTime > System.currentTimeMillis() + 60 * 1000) {
-      taskDetail.setTaskStatus(0);
-    } else {
-      taskDetail.setTaskStatus(1);
-      lock.writeLock().lock();
-      try {
-        int index = 0;
-        for (int i = taskQueue.size() - 1; i >= 0; i--) {
-          TaskDetail task = taskQueue.get(i);
-          if (task.getNextTime() < nextTime) {
-            index = i + 1;
-            break;
-          }
-        }
-        taskQueue.add(index, taskDetail);
-      } finally {
-        lock.writeLock().unlock();
-      }
-    }
-    taskRepo.addTask(taskDetail);
-  }
-
-  //删除任务
-  public void removeTask(TaskDetail detail) {
-    taskRepo.removeTask(detail);
-    taskQueue.removeIf(taskDetail -> taskDetail.getTaskId().equals(detail.getTaskId()) || taskDetail.getTaskCode().equals(detail.getTaskCode()));
-  }
-
-  //修改任务
-  public void modifyTask(TaskDetail detail) {
-
-  }
-
-  //执行任务
+  /**
+   * 执行任务
+   *
+   * @param detail
+   */
   public void executeTask(TaskDetail detail) {
     detail.setScheduler(this);
     taskExecutor.execute(detail);
   }
 
-  //暂停任务
-  public void pauseTask(TaskDetail detail) {
-
-  }
 }

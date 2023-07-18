@@ -9,15 +9,30 @@ import java.util.List;
  */
 public interface TaskRepo {
 
-  //add
+  /**
+   * 添加任务
+   *
+   * @param taskDetail
+   */
   void addTask(TaskDetail taskDetail);
 
-  //remove
-  void removeTask(TaskDetail taskParam);
+  /**
+   * 删除任务
+   *
+   * @param taskParam
+   */
+  void removeTask(TaskDetail taskDetail);
 
-  //取出快要执行的任务不要删除
-  List<TaskDetail> takeWaitingTask();
+  /**
+   * 获取等待执行的任务
+   *
+   * @param execTime 执行时间
+   * @return 任务列表
+   */
+  List<TaskDetail> takeWaitingTask(Long execTime);
 
-  //初始化
+  /**
+   * 初始化
+   */
   void init();
 }

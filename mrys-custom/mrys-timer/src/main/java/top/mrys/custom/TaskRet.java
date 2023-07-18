@@ -1,5 +1,6 @@
 package top.mrys.custom;
 
+import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Optional;
@@ -9,6 +10,16 @@ import java.util.Optional;
  */
 public class TaskRet {
 
+  /**
+   * 是否继续执行
+   */
+  @Setter
+  @Getter
+  private boolean _continue = true;
+
+  /**
+   * 新任务
+   */
   @Setter
   private TaskDetail newTaskDetail;
 
