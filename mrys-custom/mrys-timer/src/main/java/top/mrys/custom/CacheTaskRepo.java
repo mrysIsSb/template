@@ -79,15 +79,16 @@ public class CacheTaskRepo implements TaskRepo {
         try {
           if (queue.size() == 0) {
             queue.addAll(taskDetails);
-          }
-          int index = 0;
-          for (TaskDetail detail : taskDetails) {
-            for (; index < queue.size(); index++) {
-              TaskDetail taskDetail = queue.get(index);
-              if (taskDetail.getNextTime() > detail.getNextTime()) {
-                queue.add(index, detail);
-                index++;
-                break;
+          } else {
+            int index = 0;
+            for (TaskDetail detail : taskDetails) {
+              for (; index < queue.size(); index++) {
+                TaskDetail taskDetail = queue.get(index);
+                if (taskDetail.getNextTime() > detail.getNextTime()) {
+                  queue.add(index, detail);
+                  index++;
+                  break;
+                }
               }
             }
           }
