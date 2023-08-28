@@ -2,6 +2,7 @@ package top.mrys.custom.config;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.json.JSONUtil;
+import jakarta.annotation.Resource;
 import jakarta.servlet.Filter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
@@ -10,7 +11,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.ApplicationContext;
@@ -65,15 +65,15 @@ import static org.springframework.web.servlet.function.RequestPredicates.POST;
 @AutoConfigureAfter(AutoConfigurationSecurity.class)
 @Slf4j
 public class WebMvcConfig implements Filter, WebMvcConfigurer {
-  @Autowired
+  @Resource
   private List<SecurityFilter> filters;
-  @Autowired
+  @Resource
   private SecurityContext securityContext;
-  @Autowired
+  @Resource
   private ApplicationContext applicationContext;
-  @Autowired
+  @Resource
   private Optional<List<LoginFunction>> loginFunctionsOptional;
-  @Autowired
+  @Resource
   private ExceptionHandlerRegistry exceptionHandlerRegistry;
 
   @Override
