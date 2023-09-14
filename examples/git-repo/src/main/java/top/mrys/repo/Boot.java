@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class Boot {
 
-  private static final String token = "w4tXxfPJEMaCzg_MPEp5";
+  private static final String token = "7rhVzyTtsoZCgS-5SZ7z";
   private static final Integer port = 80;
   private static final String host = "localhost";
   private static final String header_name = "PRIVATE-TOKEN";
@@ -41,8 +41,10 @@ public class Boot {
 
   private static final List<String> groups = List.of("qstmall");
 
-  private static final UsernamePasswordCredentialsProvider credentialsProviderOld = new UsernamePasswordCredentialsProvider("", "");
-  private static final UsernamePasswordCredentialsProvider credentialsProviderNew = new UsernamePasswordCredentialsProvider("", "");
+  private static final UsernamePasswordCredentialsProvider credentialsProviderOld =
+    new UsernamePasswordCredentialsProvider("yijie", "qst123456");
+  private static final UsernamePasswordCredentialsProvider credentialsProviderNew =
+    new UsernamePasswordCredentialsProvider("yijie", "Qst123456");
 
 
   public static void main(String[] args) {
@@ -106,7 +108,7 @@ public class Boot {
               vertx.executeBlocking(promise -> {
                 try {
                   log.info("project:{}", project);
-                  TimeUnit.SECONDS.sleep(1);
+                  TimeUnit.SECONDS.sleep(10);
                   String pathname = "D:\\ttgit\\" + k + "\\" + project.getName();
                   if (!Files.exists(Paths.get(pathname))) {
                     //拉取代码
