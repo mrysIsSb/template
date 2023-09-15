@@ -47,6 +47,7 @@ public class PreProcessSerialize extends JsonSerializer<Object> implements Appli
             StandardEvaluationContext context = new StandardEvaluationContext();
             context.setBeanResolver(new BeanFactoryResolver(applicationContext));
             context.setVariable("value", value);
+            context.setVariable("bean",gen.getCurrentValue());
             gen.writeObject(parser.parseExpression(el).getValue(context));
             return;
 
