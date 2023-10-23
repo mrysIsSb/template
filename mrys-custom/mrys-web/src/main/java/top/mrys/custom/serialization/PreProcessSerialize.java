@@ -1,6 +1,7 @@
 package top.mrys.custom.serialization;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.ClassUtil;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -22,57 +23,57 @@ import java.util.Objects;
  * @author mrys
  */
 public class PreProcessSerialize extends JsonSerializer<Object> implements ApplicationContextAware,
-        ContextualSerializer {
+  ContextualSerializer {
 
-    private PreSerializeProcess preProcess;
-    private static final ExpressionParser parser = new SpelExpressionParser();
-    private static ApplicationContext applicationContext;
+  private PreSerializeProcess preProcess;
+  private static final ExpressionParser parser = new SpelExpressionParser();
+  private static ApplicationContext applicationContext;
 
-    public PreProcessSerialize() {
+  public PreProcessSerialize() {
+
+  }
+
+  public PreProcessSerialize(PreSerializeProcess preProcess) {
+    this.preProcess = preProcess;
+  }
+
+  @Override
+  public void serialize(Object value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+    if (!Objects.isNull(value) || (preProcess != null && preProcess.nullable())) {
+      if ((!ClassUtil.isSimpleTypeOrArray(value.getClass())) && BeanUtil.isBean(value.getClass())) {
+        serializers.findValueSerializer(value.getClass()).serialize(value, gen, serializers);
+        return;
+      }
+      String el = preProcess.value();
+      StandardEvaluationContext context = new StandardEvaluationContext();
+      context.setBeanResolver(new BeanFactoryResolver(applicationContext));
+      context.setVariable("value", value);
+      context.setVariable("bean", gen.getCurrentValue());
+      gen.writeObject(parser.parseExpression(el).getValue(context));
+      return;
 
     }
+    serializers.findNullValueSerializer(null);
+  }
 
-    public PreProcessSerialize(PreSerializeProcess preProcess) {
-        this.preProcess = preProcess;
+
+  @Override
+  public JsonSerializer<?> createContextual(SerializerProvider prov, BeanProperty property) throws JsonMappingException {
+    if (property != null) { // 为空直接跳过
+      PreSerializeProcess preProcess = property.getAnnotation(PreSerializeProcess.class);
+      if (preProcess == null) {
+        preProcess = property.getContextAnnotation(PreSerializeProcess.class);
+      }
+      if (preProcess != null) {
+        return new PreProcessSerialize(preProcess);
+      }
+      return prov.findValueSerializer(property.getType(), property);
     }
+    return prov.findNullValueSerializer(property);
+  }
 
-    @Override
-    public void serialize(Object value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-        if (!Objects.isNull(value) || (preProcess != null && preProcess.nullable())) {
-            if (BeanUtil.isBean(value.getClass())) {
-                serializers.findValueSerializer(value.getClass()).serialize(value, gen, serializers);
-                return;
-            }
-            String el = preProcess.value();
-            StandardEvaluationContext context = new StandardEvaluationContext();
-            context.setBeanResolver(new BeanFactoryResolver(applicationContext));
-            context.setVariable("value", value);
-            context.setVariable("bean",gen.getCurrentValue());
-            gen.writeObject(parser.parseExpression(el).getValue(context));
-            return;
-
-        }
-        serializers.findNullValueSerializer(null);
-    }
-
-
-    @Override
-    public JsonSerializer<?> createContextual(SerializerProvider prov, BeanProperty property) throws JsonMappingException {
-        if (property != null) { // 为空直接跳过
-            PreSerializeProcess preProcess = property.getAnnotation(PreSerializeProcess.class);
-            if (preProcess == null) {
-                preProcess = property.getContextAnnotation(PreSerializeProcess.class);
-            }
-            if (preProcess != null) {
-                return new PreProcessSerialize(preProcess);
-            }
-            return prov.findValueSerializer(property.getType(), property);
-        }
-        return prov.findNullValueSerializer(property);
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        PreProcessSerialize.applicationContext = applicationContext;
-    }
+  @Override
+  public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    PreProcessSerialize.applicationContext = applicationContext;
+  }
 }
