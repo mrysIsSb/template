@@ -25,6 +25,7 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -76,6 +77,9 @@ public class WebMvcConfig implements Filter, WebMvcConfigurer {
   @Resource
   private ExceptionHandlerRegistry exceptionHandlerRegistry;
 
+  @Resource
+  private SecurityProperties securityProperties;
+
   @Override
   @SneakyThrows
   public void doFilter(ServletRequest request, ServletResponse response, jakarta.servlet.FilterChain chain) throws IOException, ServletException {
@@ -113,9 +117,18 @@ public class WebMvcConfig implements Filter, WebMvcConfigurer {
     ExpressionParser parser = new SpelExpressionParser();
 
     TemplateParserContext templateParserContext = new TemplateParserContext();
+    AntPathMatcher matcher = new AntPathMatcher();
     registry.addInterceptor(new HandlerInterceptor() {
       @Override
       public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        List<String> ignoreUrls = securityProperties.getIgnoreUrls();
+        if (CollUtil.isNotEmpty(ignoreUrls)) {
+          for (String ignoreUrl : ignoreUrls) {
+            if (matcher.match(ignoreUrl, request.getRequestURI())) {
+              return true;
+            }
+          }
+        }
         if (AuthTool.isSuperAdmin()) {
           //超级管理员 不需要判断权限
           return true;

@@ -18,6 +18,9 @@ public class SecurityProperties {
 
   private Local local;
 
+  //  忽略的url
+  private List<String> ignoreUrls;
+
   @Data
   public static class Local {
     private boolean enable;//是否启用本地用户
@@ -45,7 +48,7 @@ public class SecurityProperties {
 
     private Map<String, Object> attrs;
 
-    public UserInfo toUserInfo(){
+    public UserInfo toUserInfo() {
       BaseUserInfo info = new BaseUserInfo();
       info.setUserId(this.getUserId());
       info.setUserName(this.getUserName());
