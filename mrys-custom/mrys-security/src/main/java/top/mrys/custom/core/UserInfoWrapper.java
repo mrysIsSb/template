@@ -9,12 +9,14 @@ import java.util.Optional;
  * @author mrys
  */
 public class UserInfoWrapper implements UserInfo {
-  private UserInfo userInfo;
+  private final UserInfo userInfo;
+
+  public UserInfoWrapper(UserInfo userInfo) {
+    this.userInfo = userInfo;
+  }
 
   public static UserInfoWrapper of(UserInfo userInfo) {
-    UserInfoWrapper userInfoWrapper = new UserInfoWrapper();
-    userInfoWrapper.userInfo = userInfo;
-    return userInfoWrapper;
+    return new UserInfoWrapper(userInfo);
   }
 
   /**
