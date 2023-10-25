@@ -11,12 +11,10 @@ import java.util.Optional;
 public class UserInfoWrapper implements UserInfo {
   private UserInfo userInfo;
 
-  private UserInfoWrapper(UserInfo userInfo) {
-    this.userInfo = userInfo;
-  }
-
   public static UserInfoWrapper of(UserInfo userInfo) {
-    return new UserInfoWrapper(userInfo);
+    UserInfoWrapper userInfoWrapper = new UserInfoWrapper();
+    userInfoWrapper.userInfo = userInfo;
+    return userInfoWrapper;
   }
 
   /**
