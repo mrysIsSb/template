@@ -53,6 +53,9 @@ public class ExceptionHandlerRegistry implements ExceptionHandler {
           handler.handle(serverExchange, throwable);
         }
       });
+    } catch (IllegalStateException e) {
+      log.error(e.getMessage(), e);
+      serverExchange.getResponse().ret(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
     } catch (RuntimeException e) {
       //如果异常处理器处理异常失败，继续循环
       handle(serverExchange, e);
