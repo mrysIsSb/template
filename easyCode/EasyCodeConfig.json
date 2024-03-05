@@ -1,9 +1,9 @@
 {
-  "author" : "mrys",
+  "author" : "makejava",
   "version" : "1.2.8",
   "userSecure" : "",
   "currTypeMapperGroupName" : "Default",
-  "currTemplateGroupName" : "定制白鸽",
+  "currTemplateGroupName" : "定制qst-tool",
   "currColumnConfigGroupName" : "Default",
   "currGlobalConfigGroupName" : "Default",
   "typeMapper" : {
@@ -89,6 +89,14 @@
         "matchType" : "ORDINARY",
         "columnType" : "double(8,2)",
         "javaType" : "java.lang.String"
+      }, {
+        "matchType" : "REGEX",
+        "columnType" : "decimal(\\(\\d+\\))",
+        "javaType" : "java.math.BigDecimal"
+      }, {
+        "matchType" : "ORDINARY",
+        "columnType" : "tinyint(1) unsigned",
+        "javaType" : "java.lang.Integer"
       } ]
     }
   },
@@ -222,6 +230,13 @@
       }, {
         "name" : "serviceImpl.java.vm",
         "code" : "##导入宏定义、设置包名、类名、文件名\n$!{define.vm}\n#setPackageSuffix(\"service.impl\")\n#setTableSuffix(\"ServiceImpl\")\n#save(\"/service/impl\", \"ServiceImpl.java\")\n\n##拿到主键\n#if(!$tableInfo.pkColumn.isEmpty())\n    #set($pk = $tableInfo.pkColumn.get(0))\n#end\n##业务层类名、持久层类名、实体名\n#set($serviceSortType = $!tool.append($!tableInfo.name, \"Service\"))\n#set($serviceType = $!tool.append($!tableInfo.savePackageName, \".service.\", $serviceSortType))\n#set($repositorySortType = $!tool.append($!tableInfo.name, \"Repository\"))\n#set($repositoryType = $!tool.append($!tableInfo.savePackageName, \".repository.\", $repositorySortType))\n#set($repositoryVarName = $!tool.firstLowerCase($!repositorySortType))\n#set($entityShortType = $!tableInfo.name)\n#set($entityType = $!tableInfo.psiClassObj.getQualifiedName())\n#set($entityVarName = $!tool.firstLowerCase($!tableInfo.name))\n#set($pkShortType = $!pk.shortType)\n#set($pkType = $!pk.type)\n\nimport $pkType;\nimport $entityType;\nimport $serviceType;\nimport $repositoryType;\nimport org.springframework.stereotype.Service;\nimport javax.annotation.Resource;\nimport org.springframework.data.domain.Page;\nimport org.springframework.data.domain.Pageable;\nimport java.util.Collection;\nimport java.util.List;\nimport java.util.stream.Collectors;\nimport java.util.stream.StreamSupport;\n\n\n/**\n * $!{tableInfo.comment}业务层\n *\n * @author $!author\n * @since $!time.currTime()\n */\n@Service\npublic class $!{tableName} implements $!serviceSortType {\n\n\t@Resource\n    private $repositorySortType $repositoryVarName;\n\n    @Override\n    public void save($entityShortType $entityVarName) {\n        $!{repositoryVarName}.save($entityVarName);\n    }\n\n    @Override\n    public void deleteById($pkShortType id) {\n        $!{repositoryVarName}.delete(id);\n    }\n\n    @Override\n    public $entityShortType findById($pkShortType id) {\n        return $!{repositoryVarName}.findOne(id);\n    }\n\n    @Override\n    public List<$entityShortType> findById(Collection<$pkShortType> ids) {\n        Iterable<$entityShortType> iterable = $!{repositoryVarName}.findAll(ids);\n        return StreamSupport.stream(iterable.spliterator(), false)\n                .collect(Collectors.toList());\n    }\n\n    @Override\n    public Page<$entityShortType> list(Pageable page) {\n        return $!{repositoryVarName}.findAll(page);\n    }\n\n}\n"
+      } ]
+    },
+    "定制qst-tool" : {
+      "name" : "定制qst-tool",
+      "elementList" : [ {
+        "name" : "entity.kt.vm",
+        "code" : "##导入宏定义\n$!{define.vm}\n$!{config.vm}\n##保存文件（宏定义）\n###save($!tool.append(\"/\", ${entityPackageName}), \".kt\")\n#save(\"/\", \".kt\")\n\n##包路径（宏定义）\npackage $!{tableInfo.savePackageName}\n\n##自动导入包（全局变量）\n$!{autoImport.vm}\nimport com.mybatisflex.annotation.Id;\nimport com.mybatisflex.annotation.Table;\nimport com.mybatisflex.core.BaseMapper\nimport com.mybatisflex.core.activerecord.Model\nimport com.mybatisflex.core.handler.JacksonTypeHandler\nimport org.eclipse.microprofile.openapi.annotations.media.Schema\nimport java.util.*\n\n##表注释（宏定义）\n#tableComment(\"表实体类\")\n@Table(\"${tableInfo.obj.name}\")\nclass $!{tableInfo.name} : Model<$!{tableInfo.name}>() {\n\n#foreach($column in $tableInfo.pkColumn)\n    @Id\n#if(${column.comment})\n    @Schema(description = \"${column.comment}\")\n#end\n    var $!{column.name}: $!{tool.getClsNameByFullName($column.type)}? = null\n#break\n#end\n#foreach($column in $tableInfo.otherColumn)\n\n#if(${column.comment})\n    @Schema(description = \"${column.comment}\")\n#end\n    var $!{column.name}: $!{tool.getClsNameByFullName($column.type)}? = null\n#end\n\n}\n\ninterface $!{tableInfo.name}Mapper : BaseMapper<$!{tableInfo.name}>"
       } ]
     },
     "定制supply-mall" : {
