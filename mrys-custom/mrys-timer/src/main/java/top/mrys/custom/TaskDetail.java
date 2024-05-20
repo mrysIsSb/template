@@ -1,49 +1,41 @@
 package top.mrys.custom;
 
+import java.util.Optional;
+import java.util.concurrent.Callable;
+
 /**
- * 任务参数
+ * 任务详情接口，定义了任务的基本信息和行为。
  *
  * @author mrys
  */
-public interface TaskDetail {
+public interface TaskDetail extends Callable<Optional<TaskDetail>> {
 
   /**
-   * 获取任务id
+   * 获取任务的名字。
+   *
+   * @return 任务的名称。
    */
-  Long getTaskId();
-
-  String getTaskCode();
-
-  String getTaskName();
+  String getName();
 
   /**
-   * 获取下一次执行时间ms
+   * 注册TaskScheduler到当前任务。
+   *
+   * @param scheduler 要注册的TaskScheduler实例。
+   */
+  void register(TaskScheduler scheduler);
+
+  /**
+   * 获取下一次执行任务的时间（以毫秒为单位）。
+   *
+   * @return 下一次执行任务的时间戳。
    */
   Long getNextTime();
 
-  void setNextTime(Long nextTime);
-
   /**
-   * 获取任务参数
+   * 获取任务已经执行的次数。
+   *
+   * @return 任务执行的次数。
    */
-  String getTaskParam();
-
-  Integer getTaskStatus();
-  void setTaskStatus(Integer taskStatus);
-
-  /**
-   * 获取任务
-   */
-  Task getTask();
-
-  void setScheduler(TaskScheduler scheduler);
-
-  TaskScheduler getScheduler();
-
   Long getExecTimes();
-  void setExecTimes(Long execTimes);
 
-  Long getNeedTimes();
-
-  GenNextTime getGenNextTime();
 }

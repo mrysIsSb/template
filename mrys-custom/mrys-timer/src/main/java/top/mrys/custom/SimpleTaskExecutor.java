@@ -1,7 +1,6 @@
 package top.mrys.custom;
 
-import java.util.concurrent.Executor;
-import java.util.function.Function;
+import java.util.concurrent.ExecutorService;
 
 /**
  * 任务执行器
@@ -10,24 +9,16 @@ import java.util.function.Function;
  */
 public class SimpleTaskExecutor implements TaskExecutor {
 
-  private Executor executor;
+  private ExecutorService executor;
 
-  private Function<Task, Task> taskProxy = Function.identity();
 
-  public SimpleTaskExecutor(Executor executor) {
+  public SimpleTaskExecutor(ExecutorService executor) {
     this.executor = executor;
   }
 
-  public SimpleTaskExecutor(Executor executor, Function<Task, Task> taskProxy) {
-    this.executor = executor;
-    this.taskProxy = taskProxy;
-  }
 
   @Override
   public void execute(TaskDetail taskDetail) {
-    executor.execute(() -> {
-      Task task = taskProxy.apply(taskDetail.getTask());
-      task.execute(taskDetail);
-    });
+    executor.submit(taskDetail);
   }
 }

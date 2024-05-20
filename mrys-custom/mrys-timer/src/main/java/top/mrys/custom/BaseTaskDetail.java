@@ -6,8 +6,9 @@ import lombok.Setter;
 /**
  * @author mrys
  */
-public abstract class BaseTaskDetail implements TaskDetail {
+public abstract class BaseTaskDetail<P> implements TaskDetail {
 
+  @Getter
   private TaskScheduler scheduler;
 
   @Setter
@@ -16,40 +17,24 @@ public abstract class BaseTaskDetail implements TaskDetail {
 
   @Setter
   @Getter
-  private Long taskId;
+  private String name;
 
   @Setter
   @Getter
-  private String taskCode;
-
-  @Setter
-  @Getter
-  private String taskName;
-
-  @Setter
-  @Getter
-  private String taskParam;
-
-  @Getter
-  @Setter
-  private Integer taskStatus;
+  private P taskParam;
 
   @Setter
   @Getter
   private Long execTimes;
 
-  @Setter
-  @Getter
-  private Long needTimes;
 
   @Override
-  public void setScheduler(TaskScheduler scheduler) {
+  public void register(TaskScheduler scheduler) {
+    if (this.scheduler != null) {
+      throw new RuntimeException("任务已经注册异常");
+    }
     this.scheduler = scheduler;
-  }
-
-  @Override
-  public TaskScheduler getScheduler() {
-    return scheduler;
+    this.scheduler.addTask(this);
   }
 
 }
