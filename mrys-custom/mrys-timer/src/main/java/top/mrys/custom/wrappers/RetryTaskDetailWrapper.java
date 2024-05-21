@@ -2,7 +2,7 @@ package top.mrys.custom.wrappers;
 
 import lombok.Getter;
 import lombok.Setter;
-import top.mrys.custom.BaseTaskDetail;
+import lombok.extern.slf4j.Slf4j;
 import top.mrys.custom.TaskDetail;
 
 import java.util.Optional;
@@ -13,7 +13,8 @@ import java.util.Optional;
  *
  * @param <P> 任务详情的参数类型
  */
-public class RetryTaskDetailWrapper<P> extends TaskDetailWrapper<P> {
+@Slf4j
+public class RetryTaskDetailWrapper extends TaskDetailWrapper {
 
   private static final int DEFAULT_RETRY_TIMES = 3; // 默认重试次数
 
@@ -28,11 +29,11 @@ public class RetryTaskDetailWrapper<P> extends TaskDetailWrapper<P> {
    *
    * @param taskDetail 任务详情对象，不允许为null。该任务详情对象将被包装并提供重试机制。
    */
-  public RetryTaskDetailWrapper(BaseTaskDetail<P> taskDetail) {
+  public RetryTaskDetailWrapper(TaskDetail taskDetail) {
     this(taskDetail, DEFAULT_RETRY_TIMES);
   }
 
-  public RetryTaskDetailWrapper(BaseTaskDetail<P> taskDetail, int retryTimes) {
+  public RetryTaskDetailWrapper(TaskDetail taskDetail, int retryTimes) {
     super(taskDetail);
     this.retryTimes = retryTimes;
   }
@@ -45,16 +46,17 @@ public class RetryTaskDetailWrapper<P> extends TaskDetailWrapper<P> {
    */
   @Override
   public Optional<TaskDetail> call() throws Exception {
+    log.debug("--> {}", this.getClass());
     try {
-      return getTaskDetail().call(); // 尝试执行任务
+      return getTaskDetail().call().map(detail -> new RetryTaskDetailWrapper(detail, retryTimes)); // 尝试执行任务
     } catch (Exception e) {
-      BaseTaskDetail<P> taskDetail = getTaskDetail();
       // 判断当前重试次数是否小于设定的重试次数，如果是，则增加重试次数并重新加入执行队列
       if (getTimes() < retryTimes) {
         setTimes(getTimes() + 1);
-        taskDetail.getScheduler().addTask(this);
+        return call();
+      } else {
+        throw e; // 如果已经达到最大重试次数，抛出异常
       }
-      throw e; // 如果已经达到最大重试次数，抛出异常
     }
   }
 }

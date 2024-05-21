@@ -53,7 +53,9 @@ public class TaskScheduler {
   public void register(TaskDetail taskDetail) {
     try {
       lock.writeLock().lock();
-      taskDetail.register(this);
+      //先调用任务的registered方法，让任务初始化
+      taskDetail.registered(this);
+      addTask(taskDetail);
     } finally {
       lock.writeLock().unlock();
     }
@@ -67,14 +69,14 @@ public class TaskScheduler {
   public void addTask(TaskDetail taskDetail) {
     try {
       lock.writeLock().lock();
-      Long nextedTime = taskDetail.nextTime();
+      Long nextedTime = taskDetail.getNextTime();
       if (nextedTime == null) {
         return;
       }
       // 将任务按照执行时间插入到正确的位置，保持队列的有序性
       int index = 0;
       for (TaskDetail detail : taskQueue) {
-        if (detail.nextTime() > nextedTime) {
+        if (detail.getNextTime() > nextedTime) {
           break;
         }
         index++;
@@ -99,7 +101,7 @@ public class TaskScheduler {
           while (!taskQueue.isEmpty()) {
             // 从队列中获取下一个需要执行的任务
             TaskDetail detail = taskQueue.peek();
-            if (detail.nextTime() > System.currentTimeMillis()) {
+            if (detail.getNextTime() > System.currentTimeMillis()) {
               return;
             }
             taskQueue.poll();

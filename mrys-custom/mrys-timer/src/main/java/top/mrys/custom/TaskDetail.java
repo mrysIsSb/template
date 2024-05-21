@@ -22,7 +22,15 @@ public interface TaskDetail extends Callable<Optional<TaskDetail>> {
    *
    * @param scheduler 要注册的TaskScheduler实例。
    */
-  void register(TaskScheduler scheduler);
+  void registered(TaskScheduler scheduler);
+
+  /**
+   * 获取任务调度器。
+   * 该方法不接受任何参数。
+   *
+   * @return TaskScheduler 实例，用于任务的调度。
+   */
+  TaskScheduler getScheduler();
 
   /**
    * 获取下一次执行任务的时间（以毫秒为单位）。

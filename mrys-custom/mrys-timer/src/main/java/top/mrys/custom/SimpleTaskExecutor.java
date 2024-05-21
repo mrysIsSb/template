@@ -1,5 +1,7 @@
 package top.mrys.custom;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.concurrent.ExecutorService;
 
 /**
@@ -7,6 +9,7 @@ import java.util.concurrent.ExecutorService;
  *
  * @author mrys
  */
+@Slf4j
 public class SimpleTaskExecutor implements TaskExecutor {
 
   private ExecutorService executor;
@@ -19,6 +22,12 @@ public class SimpleTaskExecutor implements TaskExecutor {
 
   @Override
   public void execute(TaskDetail taskDetail) {
-    executor.submit(taskDetail);
+    executor.submit(() -> {
+      try {
+        taskDetail.call();
+      } catch (Exception e) {
+        log.error(e.getMessage(), e);
+      }
+    });
   }
 }

@@ -25,16 +25,16 @@ public abstract class BaseTaskDetail<P> implements TaskDetail {
 
   @Setter
   @Getter
-  private Long execTimes;
+  private Long execTimes = 0L;
 
 
   @Override
-  public void register(TaskScheduler scheduler) {
+  public void registered(TaskScheduler scheduler) {
     if (this.scheduler != null) {
       throw new RuntimeException("任务已经注册异常");
     }
+    this.nextTime = System.currentTimeMillis();
     this.scheduler = scheduler;
-    this.scheduler.addTask(this);
   }
 
 }
