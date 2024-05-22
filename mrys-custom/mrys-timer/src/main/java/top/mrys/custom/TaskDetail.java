@@ -11,6 +11,11 @@ import java.util.concurrent.Callable;
 public interface TaskDetail extends Callable<Optional<TaskDetail>> {
 
   /**
+   * 获取任务的ID。
+   */
+  String getID();
+
+  /**
    * 获取任务的名字。
    *
    * @return 任务的名称。

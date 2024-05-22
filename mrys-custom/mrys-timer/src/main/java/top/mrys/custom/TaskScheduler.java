@@ -2,6 +2,7 @@ package top.mrys.custom;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import top.mrys.custom.wrappers.CallBackTaskDetailWrapper;
 
 import java.util.LinkedList;
 import java.util.concurrent.Executors;
@@ -9,6 +10,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 /**
  * 任务调度类，负责管理和执行计划任务。
@@ -140,8 +143,25 @@ public class TaskScheduler {
    *
    * @param detail 待执行的任务详情
    */
-  public void executeTask(TaskDetail detail) {
+  private void executeTask(TaskDetail detail) {
     taskExecutor.execute(detail);
+  }
+
+  public void executeTask(String id, Consumer<TaskDetail> onSuccess, BiConsumer<TaskDetail, Exception> onFail) {
+    try {
+      lock.writeLock().lock();
+      TaskDetail taskDetail = taskQueue.stream().filter(t -> t.getID().equals(id)).findFirst().orElse(null);
+      if (taskDetail == null) {
+        return;
+      }
+      taskQueue.remove(taskDetail);
+      taskDetail = new CallBackTaskDetailWrapper(taskDetail, false)
+        .onSuccess(onSuccess)
+        .onFail(onFail);
+      executeTask(taskDetail);
+    } finally {
+      lock.writeLock().unlock();
+    }
   }
 
 }

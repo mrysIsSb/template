@@ -41,7 +41,7 @@ public class BaseTaskDetailWrapper extends TaskDetailWrapper {
       baseTaskDetail.setExecTimes(taskDetail.getExecTimes() + 1);
     }
     // 执行任务并获取结果
-    Optional<TaskDetail> called = taskDetail.call().map(BaseTaskDetailWrapper::new);
+    Optional<TaskDetail> called = taskDetail.call();
     // 如果任务执行成功，将其添加到调度器中
     called.ifPresent(taskDetail.getScheduler()::addTask);
     return called;

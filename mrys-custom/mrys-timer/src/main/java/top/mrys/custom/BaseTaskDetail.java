@@ -13,6 +13,10 @@ public abstract class BaseTaskDetail<P> implements TaskDetail {
 
   @Setter
   @Getter
+  private String ID;
+
+  @Setter
+  @Getter
   private Long nextTime;
 
   @Setter

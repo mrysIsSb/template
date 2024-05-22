@@ -30,6 +30,15 @@ public abstract class TaskDetailWrapper implements TaskDetail {
     return taskDetail;
   }
 
+
+  /**
+   * 获取任务的ID。
+   */
+  @Override
+  public String getID() {
+    return taskDetail.getID();
+  }
+
   /**
    * 获取下一个执行时间。
    *

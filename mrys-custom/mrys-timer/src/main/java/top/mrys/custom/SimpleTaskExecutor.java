@@ -1,6 +1,7 @@
 package top.mrys.custom;
 
 import lombok.extern.slf4j.Slf4j;
+import top.mrys.custom.wrappers.BaseTaskDetailWrapper;
 
 import java.util.concurrent.ExecutorService;
 
@@ -24,7 +25,7 @@ public class SimpleTaskExecutor implements TaskExecutor {
   public void execute(TaskDetail taskDetail) {
     executor.submit(() -> {
       try {
-        taskDetail.call();
+        new BaseTaskDetailWrapper(taskDetail).call();
       } catch (Exception e) {
         log.error(e.getMessage(), e);
       }
