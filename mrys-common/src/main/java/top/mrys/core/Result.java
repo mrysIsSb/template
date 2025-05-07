@@ -19,7 +19,7 @@ public class Result<T> {
   public static int SUCCESS = 0;
   public static int FAIL = -1;
 
-  private static final ServiceLoader<JsonConvertor> JSON_CONVERTORS = ServiceLoader.load(JsonConvertor.class);
+  private final ServiceLoader<JsonConvertor> JSON_CONVERTORS = ServiceLoader.load(JsonConvertor.class);
 
 
   // ----------------------base begin----------------------

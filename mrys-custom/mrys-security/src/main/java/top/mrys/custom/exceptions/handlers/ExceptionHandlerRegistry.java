@@ -46,7 +46,7 @@ public class ExceptionHandlerRegistry implements ExceptionHandler {
         }
         if (handlers.contains(handler)) {
           log.error(throwable.getMessage(), throwable);
-          serverExchange.getResponse().ret(HttpStatus.INTERNAL_SERVER_ERROR, "循环异常处理器");
+          serverExchange.getResponse().ret(HttpStatus.INTERNAL_SERVER_ERROR, "{\"code\":-1,\"msg\":\"异常处理器系统异常\"}");
         } else {
           handlers.add(handler);
           handled.set(handlers);
